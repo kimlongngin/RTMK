@@ -37,6 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users.apps.UsersConfig', 
+    'category',
+    'product',
+    'client',
+    'invoice',
+    'invoice_item',
+    'location',
+    'position',
+    'product_history',
+    'product_unit',
+    'sell',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +79,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RTsite.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
