@@ -1,0 +1,71 @@
+{% extends 'product/base.html' %}
+
+{% block title %} Product {% endblock %}
+
+{% block body %}
+
+	<div class="index_background">
+		{% if all_product %}
+
+			<div class="head_index">
+				<div class="head_index_pad">
+
+					<form action="{% url 'product:product_search' %}" method="get" class="form-inline" >
+						
+						<div class="form-group">
+						    <input type="text" class="form-control" name= "q" value="" placeholder="Name, ID, Code" required>
+						</div>
+					  <button type="submit" class="btn btn-primary">Search</button>
+					</form>
+
+
+				</div>
+			</div>
+
+
+			<div class="row row-no-gutters">
+				{% for product in all_product %}
+					<a href="{% url 'product:product_detail' product.id %}">
+					  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
+							<div class="product_list">
+								{% if product.default_image %}
+										<div style="margin-bottom: 20px;"><img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive"></div>	
+								{% endif %}
+								<div><p class="product_name">{{ product.name }}</p></div>
+								<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+								<div><p class="product_price">Price: $ {{ product.price }}</p></div>
+						  	</div>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
+
+		{% else %}
+			<div style=" text-align: center; margin-top: 10px;"><h3> Don't have products in stock </h3></div>
+		{% endif %}
+	</div>
+
+
+	<div class="pagination_index">
+				
+				{% if is_paginated %}
+				<hr>
+					<ul class="pagination" style="margin:0px 0px !important">
+					{% if page_obj.has_previous %}
+					    <li>
+					        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+					    </li>
+					{% endif %}
+					    <li class="">
+					        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+					    </li>
+					{% if page_obj.has_next %}
+					    <li>
+					        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+					    </li>
+					{% endif %}
+					</ul>
+				
+				{% endif %}
+			</div>
+{% endblock %}

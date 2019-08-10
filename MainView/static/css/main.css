@@ -1,0 +1,17 @@
+html body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc((100vw - 100%) / -2);
+    /*margin-top: 40px;*/
+    /*padding: 20px 0;*/
+    /*background-color: #f2f2f2;*/
+    background-color: white;
+}
+
+.icontain
+{
+	min-height: 650px;
+	/*background-color: white;*/
+	background-color: #EFEFEF;
+}

@@ -1,0 +1,68 @@
+{% extends 'product/base.html' %}
+
+{% block title %} Product {% endblock %}
+
+{% block body %}
+
+	<div class="index_background" style="padding-left:18px; padding-right: 18px;">
+		{% if all_product %}
+
+			{% if all_product.count > 1 %}
+				<div style="padding-top: 20px;">
+					<p class="search_title">Results search of "<span style="font-style: italic;">{{ title }}" </span>:</p>
+					<hr style="border-bottom: 1px solid gray;" />
+				</div>
+			{% else %}
+				<div style="padding-top: 20px;">
+					<p class="search_title">Result search of "<span style="font-style: italic;">{{ title }}" </span>:</p>
+					<hr style="border-bottom: 1px solid gray;" />
+				</div>
+			{% endif %}
+
+			<div>
+				<div class="row row-no-gutters">
+					{% for product in all_product %}
+						<a href="{% url 'product:product_detail' product.id %}">
+						  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
+								<div class="product_list">
+									{% if product.default_image %}
+											<img src = "../../../{{ product.default_image.url }}" class="img-responsive default_image">	
+									{% endif %}
+									<div><p class="product_name">{{ product.name }}</p></div>
+									<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+									<div><p class="product_price">Price: $ {{ product.price }}</p></div>
+							  	</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+		{% else %}
+				<div style=" text-align: center; margin-top: 10px;"><h3> Search not found. </h3></div>
+			{% endif %}
+	</div>
+
+
+	<div class="pagination_index">
+				
+				{% if is_paginated %}
+				<hr>
+					<ul class="pagination" style="margin:0px 0px !important">
+					{% if page_obj.has_previous %}
+					    <li>
+					        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+					    </li>
+					{% endif %}
+					    <li class="">
+					        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+					    </li>
+					{% if page_obj.has_next %}
+					    <li>
+					        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+					    </li>
+					{% endif %}
+					</ul>
+				
+				{% endif %}
+			</div>
+{% endblock %}
