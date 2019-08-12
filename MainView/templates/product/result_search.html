@@ -4,7 +4,7 @@
 
 {% block body %}
 
-	<div class="index_background" style="padding-left:18px; padding-right: 18px;">
+	<div class="index_background">
 		{% if all_product %}
 
 			{% if all_product.count > 1 %}
@@ -19,23 +19,21 @@
 				</div>
 			{% endif %}
 
-			<div>
-				<div class="row row-no-gutters">
-					{% for product in all_product %}
-						<a href="{% url 'product:product_detail' product.id %}">
-						  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
-								<div class="product_list">
-									{% if product.default_image %}
-											<img src = "../../../{{ product.default_image.url }}" class="img-responsive default_image">	
-									{% endif %}
-									<div><p class="product_name">{{ product.name }}</p></div>
-									<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
-									<div><p class="product_price">Price: $ {{ product.price }}</p></div>
-							  	</div>
-							</div>
-						</a>
-					{% endfor %}
-				</div>
+			<div class="row row-no-gutters">
+				{% for product in all_product %}
+					<a href="{% url 'product:product_detail' product.id %}">
+					  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
+							<div class="product_list">
+								{% if product.default_image %}
+										<div style="margin-bottom: 20px;"><img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive"></div>	
+								{% endif %}
+								<div><p class="product_name">{{ product.name }}</p></div>
+								<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+								<div><p class="product_price">Price: $ {{ product.price }}</p></div>
+						  	</div>
+						</div>
+					</a>
+				{% endfor %}
 			</div>
 		{% else %}
 				<div style=" text-align: center; margin-top: 10px;"><h3> Search not found. </h3></div>

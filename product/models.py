@@ -16,7 +16,7 @@ class ProductCategory(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
-
+    is_status = models.BooleanField(default=True)
     def __str__ (self):
     	# return self.name + ' ' + str(self.created_at)
     	return self.name 
@@ -128,9 +128,10 @@ class Promotion(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	discount_as_percentag = models.IntegerField(default=0) 
 	discount_as_price = models.FloatField(default=0.0) 
+	promotion_image = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
 	description = models.TextField()
-	start_date_discount = models.DateTimeField(auto_now=False, auto_now_add=False)
-	end_date_discount = models.DateTimeField(auto_now=False, auto_now_add=False)
+	start_date = models.DateTimeField(auto_now=False, auto_now_add=False)
+	end_date = models.DateTimeField(auto_now=False, auto_now_add=False)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
@@ -167,6 +168,7 @@ class ProductInStockHistory(models.Model):
 	unit = models.IntegerField(default=0) # Amount of Unit
 	amount_per_unit =  models.IntegerField(default=0) # Amount product of product in stock per Unit
 	description = models.TextField()
+	action = models.CharField(max_length=20, null=True, blank=True) # NO SAVE, UPDATE, DELETE
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
@@ -192,10 +194,11 @@ class ProductHistory(models.Model):
 	default_image = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
 	size = models.CharField(max_length=250, null=True, blank=True)
 	color = models.CharField(max_length=20, null=True, blank=True)
-	rice =  models.FloatField(default=0.0) # Price for each product item in per/unit
-	special_pprice = models.FloatField(default=0.0) # In case some clients buy many products
+	price =  models.FloatField(default=0.0) # Price for each product item in per/unit
+	special_price = models.FloatField(default=0.0) # In case some clients buy many products
 	description = models.TextField()
 	review = models.IntegerField(default=0)
+	action = models.CharField(default="", max_length=10) # save, update, delete
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)

@@ -56,30 +56,27 @@
 	  			</div>
 			</div>
 
+			{% if product.subproductimage_set.all.count > 0 %}
+				<div class="product_title_more_detail"> 
+						<p>More detail</p>
+				</div>
 
-			<div class="product_title_more_detail"> 
-				
-					<p>More detail</p>
-				
-			</div>
-
-			<div class = "row" style="margin-bottom: 20px; margin:auto; ">
-				
-				{% if product.subproductimage_set.all.count > 0 %}
-					{% for j in product.subproductimage_set.all  %}
-						{% if j.is_status == True %}
-							<div class="col-md-6" style="margin-bottom: 20px;">
-								<!-- <p class="bg-primary sub_title"> {{ j.name }} </p> -->
-								<img src = "../../../{{ j.sub_image.url }}" class="img-rounded img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="">
-								<p class="sub_title"> {{ j.name }} </p>
-								<p class="text-justify" style="padding-top:5px;"> {{ j.description }} </p>
-							</div>
-						{% endif %}
-					{% endfor %}
-				{% else %}
-					<p class="btn btn-danger">Product not found</p>
-				{% endif %}
-			</div>
+				<div class = "row" style="margin-bottom: 20px; margin:auto; ">
+					
+					
+						{% for j in product.subproductimage_set.all  %}
+							{% if j.is_status == True %}
+								<div class="col-md-6" style="margin-bottom: 20px;">
+									<!-- <p class="bg-primary sub_title"> {{ j.name }} </p> -->
+									<img src = "../../../{{ j.sub_image.url }}" class="img-rounded img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="">
+									<p class="sub_title"> {{ j.name }} </p>
+									<p class="text-justify" style="padding-top:5px;"> {{ j.description }} </p>
+								</div>
+							{% endif %}
+						{% endfor %}
+					
+				</div>
+			{% endif %}
 
 			<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
 			
