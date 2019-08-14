@@ -54,6 +54,13 @@
 	  			</div>
 			</div>
 
+
+
+
+
+
+
+
 			{% if product.subproductimage_set.all.count > 0 %}
 				<div class="product_title_more_detail"> 
 						<p>More detail</p>
@@ -61,14 +68,34 @@
 
 				<div class = "row" style="margin-bottom: 20px; margin:auto; ">
 					
-					
 						{% for j in product.subproductimage_set.all  %}
 							{% if j.is_status == True %}
-								<div class="col-md-6" style="margin-bottom: 20px;">
+								<div class="col-md-6" style="margin-bottom: 20px; border: 0px solid red;" id="id_subproduct{{j.id}}">
+
 									<!-- <p class="bg-primary sub_title"> {{ j.name }} </p> -->
-									<img src = "../../../{{ j.sub_image.url }}" class="img-rounded img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="">
-									<p class="sub_title"> {{ j.name }} </p>
-									<p class="text-justify" style="padding-top:5px;"> {{ j.description }} </p>
+									<img src = "../../../{{ j.sub_image.url }}" class="img-rounded img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="margin:auto;">
+									<p class="sub_title" style="margin:auto;text-align: center;"> {{ j.name }} </p>
+									<p class="text-justify" style="padding-top:5px; text-align: center;"> {{ j.description }} </p>
+
+									<!-- <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+									  <div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingThree">
+									      <h4 class="panel-title">
+									        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+									          <p class="sub_title"> {{ j.name }} </p>
+									        </a>
+									      </h4>
+									    </div>
+									    
+									    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+									      <div class="panel-body">
+									       		<p class="text-justify" style="padding-top:5px;"> {{ j.description }} </p>
+									      </div>
+									    </div>
+									  </div>
+									</div> -->
+
+
 								</div>
 							{% endif %}
 						{% endfor %}
@@ -103,6 +130,10 @@
 			  document.body.scrollTop = 0;
 			  document.documentElement.scrollTop = 0;
 			}
+
+			$('#myCollapsible').collapse({
+			  toggle: false
+			})
 			</script>
 	{% endblock %}
 

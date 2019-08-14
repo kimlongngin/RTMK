@@ -46,8 +46,6 @@ class DetailView(generic.DetailView):
 			try:
 				data = Product.objects.filter(id=self.kwargs['pk'], is_status=True)
 				if data:
-					print(data)
-					print("hello world")
 					# Product.save(update_fields=["active"]) 
 					ireview = data[0].review
 					ireview = ireview + 1

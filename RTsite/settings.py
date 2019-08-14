@@ -40,15 +40,13 @@ INSTALLED_APPS = [
   
     'productcategory',
     'product',
-    'client',
-    'invoice',
-    'invoice_item',
     'location',
     'product_history',
     'product_unit',
     'sell',
     'usercontrol',
     'MainView',
+    'customer',
 
 ]
 

@@ -22,7 +22,7 @@ class ProductCategory(models.Model):
     	return self.name 
 
     class  Meta:
-    	ordering = ['created_at']
+    	ordering = ['-created_at']
 
 def upload_location(instance, filename):
 		filebase, extension = filename.split(".")
@@ -76,7 +76,7 @@ class Product(models.Model):
 		return self.name
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.name
 
@@ -100,7 +100,7 @@ class SubProductImage(models.Model):
 		return self.name
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	    	return self.name
 
@@ -119,7 +119,7 @@ class ProductInStock(models.Model):
 		return self.title
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.title
 
@@ -139,7 +139,7 @@ class Promotion(models.Model):
 	def __str__ (self):
 		return self.title
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.title
 
@@ -156,7 +156,7 @@ class ProductUnit(models.Model):
 		return self.title
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.title
 
@@ -168,7 +168,7 @@ class ProductInStockHistory(models.Model):
 	unit = models.IntegerField(default=0) # Amount of Unit
 	amount_per_unit =  models.IntegerField(default=0) # Amount product of product in stock per Unit
 	description = models.TextField()
-	action = models.CharField(max_length=20, null=True, blank=True) # NO SAVE, UPDATE, DELETE
+	action = models.CharField(max_length=20, null=True, blank=True) # NO SVE, UPD, DEL
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
@@ -177,7 +177,7 @@ class ProductInStockHistory(models.Model):
 		return self.title
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.title
 
@@ -210,7 +210,7 @@ class ProductHistory(models.Model):
 		return self.name
 
 	class Meta:
-	    ordering = ['created_at']
+	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.name
 

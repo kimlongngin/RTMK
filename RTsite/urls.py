@@ -36,7 +36,6 @@ urlpatterns = [
     # url(r'^admin/', include(admin.site.urls)),
     # path('category/', include('category.urls')),
     # path('', include('category.urls')), # login at the page loading. http://127.0.0.1:8000 #
-    path('client/', include('client.urls')),
     path('product/', include('product.urls')),
     path('product_history/', include('product_history.urls')),
     path('usercontrol/', include('usercontrol.urls'))
