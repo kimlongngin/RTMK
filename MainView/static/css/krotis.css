@@ -71,6 +71,7 @@
 .my_header
 {
 	background-color: rgb(40, 38, 41);
+	/*background-color: rgb(21, 78, 68);*/
 	background-image: none;
 	background-repeat: repeat;
 	background-attachment: scroll;

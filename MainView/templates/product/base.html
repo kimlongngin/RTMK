@@ -2,15 +2,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width' name='viewport'>
+
    <!-- Latest compiled and minified CSS -->
 	<script  type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"> </script>
     <!-- <script  type="text/javascript" src="{% static 'js/jquery.tablesorter.js' %}"> </script> -->
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>	
+	<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+ -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" ></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
 
 <!-- 	<script  type="text/javascript" src="{% static 'js/bootstrap.bundle.js' %}"> </script>
 	<script  type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"> </script>
@@ -24,6 +30,7 @@
 	<link rel="stylesheet"  href="{% static 'css/bootstrap.css' %}"/>
 	<link rel="stylesheet"  href="{% static 'css/bootstrap.min.css' %}"/> -->
 	<script  type="text/javascript" src="{% static 'js/rate.js' %}"> </script>
+	<script  type="text/javascript" src="{% static 'js/slidebar.js' %}"> </script>
 
 	<link rel="stylesheet"  href="{% static 'css/main.css' %}"/>
 	<link rel="stylesheet"  href="{% static 'css/style.css' %}"/>
@@ -32,6 +39,9 @@
 	<link rel="stylesheet"  href="{% static 'css/login.css' %}"/>
 	<link rel="stylesheet"  href="{% static 'css/product.css' %}"/>
 	<link rel="stylesheet"  href="{% static 'css/rate.css' %}"/>
+	<link rel="stylesheet"  href="{% static 'css/slidebar.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/homepage.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/stock.css' %}">
 
     <title>{% block title %}{% endblock %}</title>
 
@@ -50,11 +60,35 @@
 					<span class="icon-bar"></span> 
 				</button> 
 				
-				<a class="navbar-brand" href="#"> RTsite </a>
+				<!-- <a class="navbar-brand" href="#"> RTsite </a> -->
+				
+				<div id="mySidenav" class="sidenav">
+				    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+				    <a href="{% url 'MainView:main_view_index' %}"><span class="glyphicon glyphicon-th-large"> Dashboard </span></a> <!-- Stock --> 
+				    <hr style="margin-bottom: 0px !important; "> 
+				    <a href="{% url 'product:product_in_stock' %}"><span class="glyphicon glyphicon-book"> Stock </span></a> <!-- Stock --> 
+				    <hr style="margin-bottom: 0px !important; "> 
+				    <a href="{% url 'product:product_index' %}"><span class="glyphicon glyphicon-list-alt"> Product </span></a>
+				    <hr style="margin-bottom: 0px !important; ">
+				    <a href="#"><span class="glyphicon glyphicon-shopping-cart"> Sale </span></a> <!-- Sale -->
+				    <hr style="margin-bottom: 0px !important; ">
+				    <a href="#"><span class="glyphicon glyphicon-list-alt"> Owe </span></a> <!-- Owe -->
+				    <hr style="margin-bottom: 0px !important; ">
+				    <a href="#"> <span class="glyphicon glyphicon-print"> Report </span> </a> <!-- Report -->
+				    <hr style="margin-bottom: 0px !important; ">
+				</div>
+			    <div class="navbar-brand">
+                    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰</span>
+                </div>
+				            
+				
 			</div> 
+
+
+
 			
 			<nav class="collapse navbar-collapse" id="bs-navbar"> 
-				<ul class="nav navbar-nav"> 
+				<!-- <ul class="nav navbar-nav"> 
 					<li class="active">
 						<a href="#">
 							<span class="glyphicon glyphicon glyphicon-home" aria-hidden=true> Home </span>
@@ -70,7 +104,7 @@
 							<span class="glyphicon glyphicon-phone-alt" aria-hidden=true> Contact </span>
 						</a>
 					</li>
-				</ul> 
+				</ul> --> 
 		
 				
 				{% if user.is_authenticated %}
@@ -93,19 +127,13 @@
 								<span class="glyphicon glyphicon-off" aria-hidden=true> Logout </span>
 							</a>
 						</li>
-						
 					</ul>
 
 				{% else %}
 				    
 				    <ul class="nav navbar-nav navbar-right">
+						
 						<li class="">
-							<a href="">
-								<span class="glyphicon glyphicon-plus" aria-hidden=true> Add </span>
-							</a>
-						</li>
-						<li class="">
-							
 							<a href="{% url 'usercontrol:login' %}">
 								<span class="glyphicon glyphicon-user" aria-hidden=true> Login </span>
 							</a>
@@ -136,7 +164,7 @@
 	</main>
 
 	{% block javascript %}
-
+		
 	{% endblock %}
 </body>
 </html>

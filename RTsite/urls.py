@@ -38,7 +38,8 @@ urlpatterns = [
     # path('', include('category.urls')), # login at the page loading. http://127.0.0.1:8000 #
     path('product/', include('product.urls')),
     path('product_history/', include('product_history.urls')),
-    path('usercontrol/', include('usercontrol.urls'))
+    path('usercontrol/', include('usercontrol.urls')),
+    path('MainView/', include('MainView.urls'))
     
     # url(r'^admin/', admin.site.urls),
     # url(r'^category/', views.index, 'category-index'),

@@ -13,49 +13,48 @@ from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
-from .forms import ProductSearchForm
 from django.template import loader 
 from django.views.generic.list import ListView
 from django.contrib import messages
 
 
-
-
 class IndexView(SuccessMessageMixin, generic.ListView):
-	template_name =  'product/index.html'
+	template_name = 'MainView/default.html'
 	context_object_name = 'all_product'
 	paginate_by = 20
+	
 	def get_queryset(self):
 		return Product.objects.filter(is_status=True).order_by('-created_at')
 
-class DetailView(generic.DetailView):
-	template_name =  'product/detail.html'
 
-	def get(self, request, *args, **kwargs):
-		print(self.kwargs['pk'])
+# class DetailView(generic.DetailView):
+# 	template_name =  'product/detail.html'
+
+# 	def get(self, request, *args, **kwargs):
+# 		print(self.kwargs['pk'])
 		
-		if self.kwargs['pk']:
-			try:
-				data = Product.objects.filter(id=self.kwargs['pk'], is_status=True)
+# 		if self.kwargs['pk']:
+# 			try:
+# 				data = Product.objects.filter(id=self.kwargs['pk'], is_status=True)
 
-				return render(request, self.template_name, {'products':data})
-			except Product.DoesNotExist:
-				raise Http404(" Data does not exist")
-		else:
-			raise Http404("Please check your data again.")
+# 				return render(request, self.template_name, {'products':data})
+# 			except Product.DoesNotExist:
+# 				raise Http404(" Data does not exist")
+# 		else:
+# 			raise Http404("Please check your data again.")
 
 
-class SearchProductView(View):
-	template_name = 'product/search.html'
-	form = ProductSearchForm
+# class SearchProductView(View):
+# 	template_name = 'product/search.html'
+# 	form = ProductSearchForm
 
-	def post(self, request):
-		print('hello')
-		q = request.GET['q']
+# 	def post(self, request):
+# 		print('hello')
+# 		q = request.GET['q']
 		
-		data = Product.objects.filter(name = q, is_status=True)
+# 		data = Product.objects.filter(name = q, is_status=True)
 
-		return render(request, self.template_name, {'products':data})
+# 		return render(request, self.template_name, {'products':data})
 	
 
 

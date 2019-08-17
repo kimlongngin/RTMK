@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Product, ProductHistory, ProductUnit, ProductCategory, ProductInStock, SubProductImage, Promotion, ProductInStockHistory
+from .models import Product,ProductType, ProductHistory, ProductUnit, ProductCategory, ProductInStock, SubProductImage, Promotion, ProductInStockHistory, StockLocation
 from django.contrib.auth.models import Group 
 from django.contrib.admin.models import LogEntry, ADDITION
 import os
@@ -15,6 +15,8 @@ from django.contrib.admin.utils import model_ngettext
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _, gettext_lazy
+
+
 class ProductCategoryAdmin(admin.ModelAdmin):
 	list_display = ('name', 'created_at', 'is_status')
 	search_fields = ['name']
@@ -27,79 +29,35 @@ class ProductAdmin(admin.ModelAdmin):
 	list_display = ('name', 'product_number', 'serial_number', 'created_at', 'is_status')
 	search_fields = ('name', 'product_number', 'serial_number')
 	list_per_page = 10 
-
-	# def save_model(self, request, obj, form, change):
-	# 	#obj.save()
-
-	# 	category = obj.product_category
-	# 	print(category)
-	# 	return category
-		# name = obj.name
-		# product_number = obj.product_number
-		# serial_number = obj.serial_number
-		# default_image = obj.default_image
-		# size =obj.size
-		# color = obj.color
-		# price = obj.price
-		# special_price = obj.special_price
-		# description = obj.description
-		# review = obj.review
-		# action = "save"
-		# ProductHistory.save_model(obj)
-
-		# super().save_model(request, obj, form, change)
-
 admin.site.register(Product, ProductAdmin)
 
 
-class ProductUnitAdmin(admin.ModelAdmin):
-	list_display = ('title', 'product', 'created_at', 'is_status')
-	search_fields = ('product__name', 'title')
-	list_per_page = 10 
-admin.site.register(ProductUnit, ProductUnitAdmin)
+# class ProductUnitAdmin(admin.ModelAdmin):
+# 	list_display = ('title', 'product', 'created_at', 'is_status')
+# 	search_fields = ('product__name', 'title')
+# 	list_per_page = 10 
+# admin.site.register(ProductUnit, ProductUnitAdmin)
 
 
 class ProductHistoryAdmin(admin.ModelAdmin):
 	list_display = ('name', 'product_number', 'serial_number', 'created_at')
 	search_fields = ('name', 'product_number', 'serial_number')
 	list_per_page = 10 
-
 admin.site.register(ProductHistory, admin.ModelAdmin)
 	
-
 
 
 # Delete selected product in stock historys
 
 class ProductInStockAdmin(admin.ModelAdmin):
-	
-	list_display = ('title', 'product', 'unit_title', 'unit', 'amount_per_unit', 'created_at', 'is_status')
+	# list_display = ('title', 'product','unit', 'amount_per_unit', 'created_at', 'is_status')
+	list_display = ('product','unit', 'amount', 'created_at', 'is_status')
 	search_fields = ('product__name', 'title')
 	# list_display_links = None
 	view_on_site = False
 	actions = ['delete_selected']
 	list_per_page = 10 
-
-
-	# def delete_selected(request, queryset):
-	# 	print('we are going to delete you object.')
-	# 	if request.method == "POST":
-	# 		print('yes, we are.')
-	# 		for obj in queryset:
-	# 			obj.delete_queryset(obj, queryset)
-	# 			History = ProductInStockHistory.objects.create(
-	# 				product = obj.product,
-	# 				title = obj.title,
-	# 				unit_title = obj.unit_title,
-	# 				unit = obj.unit,
-	# 				amount_per_unit =  obj.amount_per_unit,
-	# 				description = obj.description,
-	# 				action = 'DEL'
-	# 			)
-	# 			History.save()
-
-
-
+	
 	def delete_selected(modeladmin, request, queryset):
     
 	    opts = modeladmin.model._meta
@@ -122,9 +80,8 @@ class ProductInStockAdmin(admin.ModelAdmin):
 	                History = ProductInStockHistory.objects.create(
 						product = obj.product,
 						title = obj.title,
-						unit_title = obj.unit_title,
 						unit = obj.unit,
-						amount_per_unit =  obj.amount_per_unit,
+						amount =  obj.amount,
 						description = obj.description,
 						action = 'DEL')
 	                History.save()
@@ -183,9 +140,8 @@ class ProductInStockAdmin(admin.ModelAdmin):
 			History = ProductInStockHistory.objects.create(
 			product = obj.product,
 			title = obj.title,
-			unit_title = obj.unit_title,
 			unit = obj.unit,
-			amount_per_unit =  obj.amount_per_unit,
+			amount =  obj.amount,
 			description = obj.description,
 			action = 'DEL'
 		)
@@ -205,9 +161,8 @@ class ProductInStockAdmin(admin.ModelAdmin):
 			History = ProductInStockHistory.objects.create(
 				product = obj.product,
 				title = obj.title,
-				unit_title = obj.unit_title,
 				unit = obj.unit,
-				amount_per_unit =  obj.amount_per_unit,
+				amount =  obj.amount,
 				description = obj.description,
 				action = 'UPD'
 			)
@@ -221,9 +176,8 @@ class ProductInStockAdmin(admin.ModelAdmin):
 			History = ProductInStockHistory.objects.create(
 				product = obj.product,
 				title = obj.title,
-				unit_title = obj.unit_title,
 				unit = obj.unit,
-				amount_per_unit =  obj.amount_per_unit,
+				amount =  obj.amount,
 				description = obj.description,
 				action = 'SVE'
 			)
@@ -234,7 +188,7 @@ admin.site.register(ProductInStock, ProductInStockAdmin)
 
 
 class SubProductImageAdmin(admin.ModelAdmin):
-	list_display = ('name', 'created_at', 'is_status')
+	list_display = ('name', 'product', 'created_at', 'is_status')
 	search_fields = ('product__name', 'name')
 admin.site.register(SubProductImage, SubProductImageAdmin)
 
@@ -250,7 +204,7 @@ admin.site.register(Promotion, PromotionAdmin)
 
 class ProductInStockHistoryAdmin(admin.ModelAdmin):
 
-	list_display = ('product_id', 'product', 'title', 'unit_title', 'unit', 'amount_per_unit', 'created_at', 'is_status')
+	list_display = ('product_id', 'product', 'title', 'unit', 'amount', 'created_at', 'is_status')
 	search_fields = ('product__name', 'title')
 	list_per_page = 10 
 
@@ -261,6 +215,21 @@ class ProductInStockHistoryAdmin(admin.ModelAdmin):
 		
 admin.site.register(ProductInStockHistory, ProductInStockHistoryAdmin)
 
+
+
+class StockLocationAdmin(admin.ModelAdmin):
+	list_display = ('name', 'location', 'address', 'controller', 'email', 'phone_number', 'created_at', 'is_status')
+	search_fields = ('name', 'location', 'address', 'controller', 'email', 'phone_number')
+		
+admin.site.register(StockLocation, StockLocationAdmin)
+
+
+class ProductTypeAdmin(admin.ModelAdmin):
+	list_display = ('title', 'created_at', 'is_status')
+	search_fields = ['title']
+		
+admin.site.register(ProductType, ProductTypeAdmin)
+		
 # admin.site.unregister(Group)
 
 

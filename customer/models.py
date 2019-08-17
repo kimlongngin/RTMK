@@ -7,6 +7,7 @@ import os
 from django.core.exceptions import ValidationError
 from location.models import Location
 from product.models import Product
+from django.core.validators import RegexValidator
 
 class Customer(models.Model):
 	full_name = models.CharField(max_length=255, primary_key=True)
@@ -27,35 +28,76 @@ class Customer(models.Model):
 	    def __unicode__(self):
 	        return self.full_name
 
-class SellInvoice(models.Model): 
-	invoice_number = models.CharField(max_length=255, primary_key=True) # will auto generated
-	user = models.ForeignKey(User, related_name='sell_invoice_users', on_delete=models.CASCADE) # who are sell this product
-	customer = models.OneToOneField(Customer, related_name='sell_invoice_customer', on_delete=models.CASCADE)
+
+def increment_invoice_number():
+	last_invoice = SaleInvoice.objects.all().order_by('id').last()
+	if not last_invoice:
+		return 'INV000001'
+	width = 6
+	invoice_number = last_invoice.invoice_number
+	invoice_int = int(invoice_number.split('INV')[-1])
+
+	new_invoice_int = invoice_int + 1
+	formatted = (width - len(str(new_invoice_int))) * "0" + str(new_invoice_int)
+	new_invoice_int = 'INV' + str(formatted)
+	return str(new_invoice_int)
+
+def getUser(self):
+	if self.request.user.is_authenticated():
+		return User
+
+class SaleInvoice(models.Model): 
+	invoice_number = models.CharField(max_length=500, null=True, blank=True, 
+        validators=[RegexValidator(regex='^[a-zA-Z0-9]*$',
+        message='Produce number must be Alphanumeric',code='Number is invalide'),], 
+        default=increment_invoice_number)
+	user = models.ForeignKey(User, related_name='sale_invoice_user', on_delete=models.CASCADE) # who are sell this product
+	customer = models.ForeignKey(Customer, related_name='sale_invoice_customer', on_delete=models.CASCADE)
+	description= models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__ (self):
+	 	return self.invoice_number 
+
+	class Meta:
+		ordering = ["-created_at", "-updated_at"]
+
+class SaleInvoiceItem(models.Model):
+	invoice = models.ForeignKey(SaleInvoice, related_name='sale_invoice', on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, related_name='sale_invoice_item_product', on_delete=models.CASCADE)
+	unit= models.IntegerField(default=0)
+	unit_price = models.FloatField(default=0.0, blank=True)
 	description= models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
 	
+	
 	def __str__ (self):
-	 	return self.user 
-
+		return str(self.invoice)
 	class Meta:
 		ordering = ["-created_at", "-updated_at"]
 
-class SellInvoiceItem(models.Model):
-	invoice = models.ForeignKey(SellInvoice, related_name='sell_invoice_item', on_delete=models.CASCADE)
-	product = models.ForeignKey(Product, related_name='invoice_item_product', on_delete=models.CASCADE)
+
+class SaleInvoiceItemHistory(models.Model):
+	invoice = models.ForeignKey(SaleInvoice, related_name='sale_invoice_history', on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, related_name='sale_invoice_item_product_history', on_delete=models.CASCADE)
 	unit= models.IntegerField(default=0)
 	unit_price = models.FloatField(default=0.0)
 	description= models.TextField(blank=True)
+	action = models.CharField(max_length=20, null=True, blank=True) # NO SVE, UPD, DEL
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
-	
-	# def get_absolute_url(self):
-	# 	return reverse('linkedhr:detail', kwargs={'pk':self.pk})
-	
+	user = models.ForeignKey(User, related_name='sale_invoice_user_history', on_delete=models.CASCADE) # who are sell this product
+
 	def __str__ (self):
-		return self.invoice
+			return str(self.invoice)
 	class Meta:
 		ordering = ["-created_at", "-updated_at"]
+
+
+
+

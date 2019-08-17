@@ -8,9 +8,7 @@ from django.contrib.auth import logout
 
 app_name = 'MainView'
 urlpatterns = [
-    url(r'^detail/(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='product_detail'),
-    url(r'^', views.IndexView.as_view(), name='product_index'),
-    url(r'^search/$', views.SearchProductView.as_view(), name='product_search'),
+     url(r'^', views.IndexView.as_view(), name='main_view_index'),
 ]
 
 if settings.DEBUG:

@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from django.views.generic import View, TemplateView 
-from product.models import Product
+from product.models import Product, ProductInStock
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -33,6 +33,7 @@ class IndexView(SuccessMessageMixin, generic.ListView):
 	template_name =  'product/index.html'
 	context_object_name = 'all_product'
 	paginate_by = 20
+
 	def get_queryset(self):
 		return Product.objects.filter(is_status=True).order_by('-created_at')
 
@@ -66,12 +67,23 @@ class SearchProductView(ListView):
 
 	def get(self, request): 
 		q = request.GET['q']
-
 		data = Product.objects.filter(name__contains=q, is_status=True) | Product.objects.filter(product_number = q, is_status=True) | Product.objects.filter(serial_number=q, is_status=True)
 		return render(request, self.template_name, {'all_product':data, 'title':q})
 
 
+class ProductInStockView(SuccessMessageMixin, generic.ListView):
 
+	model = ProductInStock
+	template_name = 'product/stock_view.html'
+	context_object_name = 'all_product_in_stock'
+	paginate_by = 20
+
+	def get_queryset(self):
+		return ProductInStock.objects.filter(is_status=True).order_by('-created_at')
+
+	# def get(self, request): 
+	# 	data = ProductInStock.objects.filter(is_status=True) 
+	# 	return render(request, self.template_name, {'all_product_in_stock':data})
 	
 
 # def RateView(request):

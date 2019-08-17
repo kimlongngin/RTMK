@@ -7,6 +7,7 @@ from django.conf import settings
 import os
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from location.models import Location
 
 # from tinymce.models import HTMLField
 
@@ -50,9 +51,26 @@ def increment_product_number():
 	new_product_int = 'RTMK' + str(formatted)
 	return str(new_product_int)
 
+class ProductType(models.Model):
+	title = models.CharField(max_length=20)
+	amount = models.IntegerField(default=0) # Amount of product in one type (Eg. 1 box = 10)
+	description = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__(self):
+		return self.title
+	class Meta:
+		ordering = ['-created_at']
+		def __unicode__(self):
+			return self.title
+			
+
 class Product(models.Model):
 	product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
 	name = models.CharField(max_length=255)
+	product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE) # Box, Bottle ...etc
 	product_number = models.CharField(max_length=500, null=True, blank=True, 
         validators=[RegexValidator(regex='^[a-zA-Z0-9]*$',
         message='Produce number must be Alphanumeric',code='Number is invalide'),], 
@@ -104,12 +122,34 @@ class SubProductImage(models.Model):
 	    def __unicode__(self):
 	    	return self.name
 
+class StockLocation(models.Model):
+	name = models.CharField(max_length=255)
+	location = models.ForeignKey(Location, on_delete=models.CASCADE)
+	address = models.TextField()
+	controller = models.ForeignKey(User, on_delete=models.CASCADE)
+	email = models.EmailField(max_length=250)
+	phone_number = models.CharField(max_length=150)
+	description = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__(self):
+		return self.name
+
+	class Meta:
+		ordering = ['-created_at']
+		def __unicode__(self):
+			return self.name
+			
+
 class ProductInStock(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	title = models.CharField(max_length=150, null=True, blank=True)
-	unit_title = models.CharField(max_length=250) # Bottle, Tube, Box 
+	# unit_title = models.CharField(max_length=50, blank=True) # Bottle, Tube, Box 
 	unit = models.IntegerField(default=0) # Amount of Unit
-	amount_per_unit =  models.IntegerField(default=0) # Amount product of product in stock per Unit
+	amount =  models.IntegerField(default=0) # Amount product of product in stock per Unit
+	stock_location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
 	description = models.TextField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
@@ -164,9 +204,9 @@ class ProductUnit(models.Model):
 class ProductInStockHistory(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	title = models.CharField(max_length=150, null=True, blank=True)
-	unit_title = models.CharField(max_length=250) # Bottle, Tube, Box 
+	# unit_title = models.CharField(max_length=250) # Bottle, Tube, Box 
 	unit = models.IntegerField(default=0) # Amount of Unit
-	amount_per_unit =  models.IntegerField(default=0) # Amount product of product in stock per Unit
+	amount =  models.IntegerField(default=0) # Amount product of product in stock per Unit
 	description = models.TextField()
 	action = models.CharField(max_length=20, null=True, blank=True) # NO SVE, UPD, DEL
 	created_at = models.DateTimeField(auto_now_add=True)

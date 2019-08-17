@@ -1,0 +1,95 @@
+{% extends 'product/base.html' %}
+
+{% block title %} Product in stock {% endblock %}
+
+{% block body %}
+	{% if all_product_in_stock %}
+	<div class="bs-callout bs-callout-danger" id="callout-tables-striped-ie8">
+	    <p class="stock_title">Stock inventory</p>
+	    <!-- <p>Striped tables are styled via the <code>:nth-child</code> CSS selector, which is not available in Internet Explorer 8.</p> -->
+	
+		<div class="bs-example" data-example-id="striped-table">
+		    <table class="table table-striped">
+		      <thead>
+		        <tr>
+		          <th>No</th>
+		          <th>Code</th>
+		          <th>Name</th>
+		          <th>Product type</th>
+		          <th>Unit</th>
+		          <th>Amount/unit</th>
+		          <th>Total amount</th>
+		          <th>Branch</th>
+		          <th>Controller</th>
+		          <th>Phone number</th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		      	{% for stock in all_product_in_stock %}
+			        <tr>
+			        	<th scope="row">#</th>
+			        	<td>{{ stock.product.product_number }} </td>
+			        	<th>{{ stock.product.name }}</th>
+			        	<td>{{ stock.product.product_type }}</td>
+			        	<td>{{ stock.unit }}</td>
+			        	<td>{{ stock.amount }}</td>
+			        	<td>
+			        		{% if stock.unit <= 0 %}
+			        			{{ stock.amount }}
+			        		{% else %}
+			        			{% if stock.amount <= 0 %}
+			        				{% widthratio stock.product.product_type.amount 1 stock.unit  %}
+			        			{% else %}
+									{% widthratio stock.product.product_type.amount 1 stock.unit as mylenght %}
+									{{ mylenght |add:stock.amount }}
+			        			{% endif %}
+			        		{% endif %}
+			        	</td>
+
+			        	<td>{{ stock.stock_location }}</td>
+			        	<td>{{ stock.stock_location.controller }}</td>
+			        	<td>{{ stock.stock_location.phone_number }}</td>
+			        </tr>
+		        {% endfor %}
+		       
+		      </tbody>
+		    </table>
+		</div>
+
+		<div style="margin-bottom: 20px;">
+			<a href = "#" type="button" class="btn btn-primary">Preview</a>
+		</div>
+	</div>
+
+
+{% else %}
+	<div class="row">
+		<div>
+			<p class="stock_title">No product in stock</p>
+		</div>
+	</div>
+{% endif %}
+
+<div class="pagination_index">
+				
+	{% if is_paginated %}
+	<hr>
+		<ul class="pagination" style="margin:0px 0px !important">
+		{% if page_obj.has_previous %}
+		    <li>
+		        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+		    </li>
+		{% endif %}
+		    <li class="">
+		        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+		    </li>
+		{% if page_obj.has_next %}
+		    <li>
+		        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+		    </li>
+		{% endif %}
+		</ul>
+	
+	{% endif %}
+</div>
+{% endblock %}

@@ -17,8 +17,10 @@ urlpatterns = [
     path('request_rate/', RateView.as_view(), name='request_rate'),
     # path('request_rate/', views.RateView, name='request_rate'),
   
+  	url(r'^product_in_stock/', views.ProductInStockView.as_view(), name='product_in_stock'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='product_detail'),
     url(r'^', views.IndexView.as_view(), name='product_index'),
+
  
     # url(r'^request_rate/$', views.RateView.as_view(), name='request_rate'),
 ]
