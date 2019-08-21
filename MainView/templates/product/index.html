@@ -8,37 +8,46 @@
 		{% if all_product %}
 
 			<div class="head_index">
-				<div class="head_index_pad">
+				
 
-					<form action="{% url 'product:product_search' %}" method="get" class="form-inline" >
-						
-						<div class="form-group">
-						    <input type="text" class="form-control" name= "q" value="" placeholder="Name, ID, Code" required>
-						</div>
-					  <button type="submit" class="btn btn-primary">Search</button>
-					</form>
-
-
+				<div class="home_title">
+					<p> <span class="glyphicon glyphicon-list-alt">  </span> Product list </p>
 				</div>
-			</div>
+			
 
-
-			<div class="row row-no-gutters">
-				{% for product in all_product %}
-					<a href="{% url 'product:product_detail' product.id %}">
-					  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
-							<div class="product_list">
-								{% if product.default_image %}
-										<div style="margin-bottom: 20px;"><img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive"></div>	
-								{% endif %}
-								<div><p class="product_name">{{ product.name }}</p></div>
-								<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
-								<div><p class="product_price">Price: $ {{ product.price }}</p></div>
-						  	</div>
-						</div>
-					</a>
-				{% endfor %}
-			</div>
+				<div class="head_pad_index" style="margin-bottom: 70px;">
+					<form action="{% url 'product:product_search' %}" method="get" class="navbar-form navbar-left">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										
+											<input type="text" class="form-control" name= "q" value="" placeholder="Enter product name, id, code" required style="border-radius:5px 5px 5px 5px !important; !important;  height: 43px; margin-top: 0px; width: 100%; ">
+									</div>
+									<button type="submit" class="btn btn-primary" style="height: 40px; ">Search</button>
+								</div>
+							</div>
+					</form>
+				</div>
+				
+				<div class="row row-no-gutters">
+					{% for product in all_product %}
+						<a href="{% url 'product:product_detail' product.id %}">
+						  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
+								<div class="product_list">
+									{% if product.default_image %}
+											<div style="margin-bottom: 20px;" class="image_wrapper">
+												<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
+											</div>	
+									{% endif %}
+									<div><p class="product_name">{{ product.name }}</p></div>
+									<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+									<div><p class="product_price">Price: $ {{ product.price }}</p></div>
+							  	</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
 
 		{% else %}
 			<div style=" text-align: center; margin-top: 10px;"><h3> Don't have products in stock </h3></div>

@@ -1,17 +1,13 @@
 # users/admin.py
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+from usercontrol.models import UserControl
 
-# from .forms import CustomUserCreationForm, CustomUserChangeForm
-# from .models import CustomUser
+class UserControlAdmin(admin.ModelAdmin):
+	list_display = ('name', 'user', 'phone_number', 'email')
+	search_fields = ('name', 'user__username', 'user__first_name', 'user__last_name', 'phone_number', 'email')
+
+admin.site.register(UserControl, UserControlAdmin)
 
 
-# class CustomUserAdmin(UserAdmin):
-#     add_form = CustomUserCreationForm
-#     form = CustomUserChangeForm
-#     model = CustomUser
-#     list_display = ['email', 'username',]
-
-# admin.site.register(CustomUser, CustomUserAdmin)
 

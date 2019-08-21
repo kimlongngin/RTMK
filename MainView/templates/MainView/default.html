@@ -1,32 +1,140 @@
 {% extends 'product/base.html' %}
 
-{% block title %} RTMK {% endblock %}
+{% block title %} Dashboard {% endblock %}
 
 {% block body %}
-	<div class="row" style="margin-top: 20px;">
-		<div class="col-md-3">
-			<div class="home_box">
-				<div class="home_sub_box"></div>
-				<div class="home_box_detail"><a href="#"> View detail </a></div>
-			</div>
+
+	<div>
+		<div class="home_title">
+			<p> <span class="glyphicon glyphicon-th-large">  </span> Dashboard </p>
 		</div>
-		<div class="col-md-3 ">
-			<div class="home_box">
-				<div class="home_sub_box"></div>
-				<div class="home_box_detail"><a href="#"> View detail </a></div>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="home_box">
-				<div class="home_sub_box"></div>
-				<div class="home_box_detail"><a href="#"> View detail </a></div>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="home_box">
-				<div class="home_sub_box"></div>
-				<div class="home_box_detail"><a href="#"> View detail </a></div>
+		<div class="home_menu">
+			<div class="row" style="margin-top: 20px;">
+
+				<div class="col-xs-6 col-sm-4 col-md-3">
+					<div class="home_box_user">
+						<div class="home_user">
+							
+							<div class="default_item_left">
+								<span class="glyphicon glyphicon-user default_item_left_icon" ></span>
+							</div>
+							<div class= "default_item_right">
+								{% if count_user > 1 %}
+									<p> {{ count_user }} </p>
+									<p> Users </p>
+								{% else %}
+									<p> {{ count_user }} </p>
+									<p> User </p>
+								{% endif %}
+							</div>
+
+						</div>
+						<div class="home_box_detail">
+							<a href="{% url 'usercontrol:listuser' %}">
+								<table style="width: 100%;">
+									<tr>
+										<td>View detail</td>
+										<td style="float:right;"><span class="glyphicon glyphicon-chevron-right"></span></td>
+									</tr>
+								</table>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-xs-6 col-sm-4 col-md-3 ">
+					<div class="home_box_customer">
+						<div class="home_customer">
+							<div class="default_item_left">
+								<span class="glyphicon glyphicon-user default_item_left_icon" ></span>
+							</div>
+							<div class= "default_item_right">
+								{% if count_customer > 1 %}
+									<p> {{ count_customer }} </p>
+									<p> Customers </p>
+								{% else %}
+									<p> {{ count_customer }} </p>
+									<p> Customer </p>
+								{% endif %}
+							</div>
+						</div>
+
+
+						<div class="home_box_detail">
+							<a href="#">
+								<table style="width: 100%;">
+									<tr>
+										<td>View detail</td>
+										<td style="float:right;"><span class="glyphicon glyphicon-chevron-right"></span></td>
+									</tr>
+								</table>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				
+				<div class="col-xs-6 col-sm-4 col-md-3">
+					<div class="home_box_category">
+						<div class="home_category">
+							
+							<div class="default_item_left">
+								<span class="glyphicon glyphicon-user default_item_left_icon" ></span>
+							</div>
+							<div class= "default_item_right">
+								{% if count_product > 1 %}
+									<p> {{ count_product }} </p>
+									<p> Categories </p>
+								{% else %}
+									<p> {{ count_product }} </p>
+									<p> Category </p>
+								{% endif %}
+							</div>
+
+
+						</div>
+						<div class="home_box_detail">
+							<a href="#">
+								<table style="width: 100%;">
+									<tr>
+										<td>View detail</td>
+										<td style="float:right;"><span class="glyphicon glyphicon-chevron-right"></span></td>
+									</tr>
+								</table>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 col-md-3">
+					<div class="home_box_promotion">
+						<div class="home_promotion">
+							<div class="default_item_left">
+								<span class="glyphicon glyphicon-user default_item_left_icon" ></span>
+							</div>
+							<div class= "default_item_right">
+								{% if count_promotion > 1 %}
+									<p> {{ count_promotion }} </p>
+									<p> Promotions </p>
+								{% else %}
+									<p> {{ count_promotion }} </p>
+									<p> Promotion </p>
+								{% endif %}
+							</div>
+						</div>
+						<div class="home_box_detail">
+							<a href="#">
+								<table style="width: 100%;">
+									<tr>
+										<td>View detail</td>
+										<td style="float:right;"><span class="glyphicon glyphicon-chevron-right"></span></td>
+									</tr>
+								</table>
+							</a>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+
 {% endblock %}

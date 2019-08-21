@@ -8,7 +8,9 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from django.views.generic import View, TemplateView 
-from product.models import Product
+from product.models import Product, Promotion
+from customer.models import Customer
+
 from django.contrib.auth.models import User
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -26,6 +28,12 @@ class IndexView(SuccessMessageMixin, generic.ListView):
 	def get_queryset(self):
 		return Product.objects.filter(is_status=True).order_by('-created_at')
 
+	def get(self, request):
+		iuser = User.objects.count()
+		icustomer = Customer.objects.count()
+		iproduct = Product.objects.count()
+		ipromotion = Promotion.objects.count()
+		return render(request, self.template_name, { 'count_user': iuser, 'count_customer':icustomer, 'count_product': iproduct, 'count_promotion':ipromotion })
 
 # class DetailView(generic.DetailView):
 # 	template_name =  'product/detail.html'

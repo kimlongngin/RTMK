@@ -84,3 +84,21 @@ class IndexView(generic.ListView):
 		
 	def get_queryset(self):
 		return Product.objects.filter(is_status=True).order_by('-created_at')
+
+
+class ListUserView(SuccessMessageMixin, generic.ListView):
+	template_name =  'userprofile/list_user.html'
+	context_object_name = 'list_user'
+	paginate_by = 20
+
+	@method_decorator(login_required(''))
+	def dispatch(self, request, *args, **kwargs):	
+		return super(self.__class__, self).dispatch(request, *args, **kwargs)	
+		
+	def get_queryset(self):
+		data = User.objects.filter()
+		return data
+
+
+
+

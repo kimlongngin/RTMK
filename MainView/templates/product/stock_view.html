@@ -4,14 +4,19 @@
 
 {% block body %}
 	{% if all_product_in_stock %}
+
+	<div>
+		<div class="home_title">
+			<p> <span class="glyphicon glyphicon-book">  </span> Stock inventory </p>
+		</div>
+	</div>
+
 	<div class="bs-callout bs-callout-danger" id="callout-tables-striped-ie8">
-	    <p class="stock_title">Stock inventory</p>
-	    <!-- <p>Striped tables are styled via the <code>:nth-child</code> CSS selector, which is not available in Internet Explorer 8.</p> -->
-	
+	    
 		<div class="bs-example" data-example-id="striped-table">
 		    <table class="table table-striped">
 		      <thead>
-		        <tr>
+		        <tr style="background-color: #1b809e; color: white; height: 45px; font-size: 16px;">
 		          <th>No</th>
 		          <th>Code</th>
 		          <th>Name</th>
@@ -56,11 +61,11 @@
 		    </table>
 		</div>
 
-		<div style="margin-bottom: 20px;">
-			<a href = "#" type="button" class="btn btn-primary">Preview</a>
-		</div>
 	</div>
-
+	
+	<div style="margin-bottom: 20px;">
+		<a href = "#" type="button" class="btn btn-primary">Preview</a>
+	</div>
 
 {% else %}
 	<div class="row">

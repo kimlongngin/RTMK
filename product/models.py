@@ -63,8 +63,9 @@ class ProductType(models.Model):
 		return self.title
 	class Meta:
 		ordering = ['-created_at']
+		
 		def __unicode__(self):
-			return self.title
+			return str(self.title)
 			
 
 class Product(models.Model):
@@ -87,8 +88,8 @@ class Product(models.Model):
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
 
-	def get_absolute_url(self):
-			return reverse('product:detail', kwargs={'pk':self.pk})
+	# def get_absolute_url(self):
+	# 		return reverse('product:detail', kwargs={'pk':self.pk})
 
 	def __str__ (self):
 		return self.name

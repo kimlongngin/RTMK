@@ -1,34 +1,29 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width' name='viewport'>
-
-   <!-- Latest compiled and minified CSS -->
-	<script  type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"> </script>
-    <!-- <script  type="text/javascript" src="{% static 'js/jquery.tablesorter.js' %}"> </script> -->
-
-	<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
- -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" ></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
-
-<!-- 	<script  type="text/javascript" src="{% static 'js/bootstrap.bundle.js' %}"> </script>
-	<script  type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"> </script>
-	<script  type="text/javascript" src="{% static 'js/bootstrap.js' %}"> </script>
-	<script  type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"> </script>
 	
-	<link rel="stylesheet"  href="{% static 'css/bootstrap-grid.css' %}"/>
-	<link rel="stylesheet"  href="{% static 'css/bootstrap-grid.min.css' %}"/>
-	<link rel="stylesheet"  href="{% static 'css/bootstrap-reboot.css' %}"/>
-	<link rel="stylesheet"  href="{% static 'css/bootstrap-reboot.min.css' %}"/>
-	<link rel="stylesheet"  href="{% static 'css/bootstrap.css' %}"/>
-	<link rel="stylesheet"  href="{% static 'css/bootstrap.min.css' %}"/> -->
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Latest compiled and minified CSS -->
+	<!-- /<script  type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"> </script> -->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+   
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+
 	<script  type="text/javascript" src="{% static 'js/rate.js' %}"> </script>
 	<script  type="text/javascript" src="{% static 'js/slidebar.js' %}"> </script>
 
@@ -42,129 +37,125 @@
 	<link rel="stylesheet"  href="{% static 'css/slidebar.css' %}">
 	<link rel="stylesheet"  href="{% static 'css/homepage.css' %}">
 	<link rel="stylesheet"  href="{% static 'css/stock.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/user.css' %}">
+	<!-- <link rel="stylesheet"  href="{% static 'css/blog.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/flex.scss' %}"> -->
+
 
     <title>{% block title %}{% endblock %}</title>
 
+
+
 </head>
-<!-- <body style="background: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);"> -->
+<body>
+	<div>
+		<header class="bs-docs-nav navbar navbar-static-top my_header" id="top"> 
+			<div class="container"> 
+				<div class="navbar-header"> 
+					<button aria-controls="bs-navbar" aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-navbar" data-toggle="collapse" type="button"> 
+						<span class="sr-only">Toggle navigation</span> 
+						<span class="icon-bar"></span> 
+						<span class="icon-bar"></span> 
+						<span class="icon-bar"></span> 
+					</button> 
+					
+					<!-- <a class="navbar-brand" href="#"> RTsite </a> -->
+					
+					<div id="mySidenav" class="sidenav">
+					    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+					    <a href="{% url 'MainView:main_view_index' %}"><span class="glyphicon glyphicon-th-large"> Dashboard </span></a> <!-- Stock --> 
+					    <hr style="margin-bottom: 0px !important; "> 
+					    <a href="{% url 'product:product_in_stock' %}"><span class="glyphicon glyphicon-book"> Stock </span></a> <!-- Stock --> 
+					    <hr style="margin-bottom: 0px !important; "> 
+					    <a href="{% url 'product:product_index' %}"><span class="glyphicon glyphicon-list-alt"> Product </span></a>
+					    <hr style="margin-bottom: 0px !important; ">
+					    <a href="#"><span class="glyphicon glyphicon-shopping-cart"> Sale </span></a> <!-- Sale -->
+					    <hr style="margin-bottom: 0px !important; ">
+					    <a href="#"><span class="glyphicon glyphicon-list-alt"> Owe </span></a> <!-- Owe -->
+					    <hr style="margin-bottom: 0px !important; ">
+					    <a href="#"> <span class="glyphicon glyphicon-print"> Report </span> </a> <!-- Report -->
+					    <hr style="margin-bottom: 0px !important; ">
+					</div>
+				    <div class="navbar-brand">
+	                    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰</span>
+	                </div>
+					            
+					
+				</div> 
 
-	    
-
-	<header class="bs-docs-nav navbar navbar-static-top my_header" id="top"> 
-		<div class="container"> 
-			<div class="navbar-header"> 
-				<button aria-controls="bs-navbar" aria-expanded="false" class="collapsed navbar-toggle" data-target="#bs-navbar" data-toggle="collapse" type="button"> 
-					<span class="sr-only">Toggle navigation</span> 
-					<span class="icon-bar"></span> 
-					<span class="icon-bar"></span> 
-					<span class="icon-bar"></span> 
-				</button> 
 				
-				<!-- <a class="navbar-brand" href="#"> RTsite </a> -->
-				
-				<div id="mySidenav" class="sidenav">
-				    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-				    <a href="{% url 'MainView:main_view_index' %}"><span class="glyphicon glyphicon-th-large"> Dashboard </span></a> <!-- Stock --> 
-				    <hr style="margin-bottom: 0px !important; "> 
-				    <a href="{% url 'product:product_in_stock' %}"><span class="glyphicon glyphicon-book"> Stock </span></a> <!-- Stock --> 
-				    <hr style="margin-bottom: 0px !important; "> 
-				    <a href="{% url 'product:product_index' %}"><span class="glyphicon glyphicon-list-alt"> Product </span></a>
-				    <hr style="margin-bottom: 0px !important; ">
-				    <a href="#"><span class="glyphicon glyphicon-shopping-cart"> Sale </span></a> <!-- Sale -->
-				    <hr style="margin-bottom: 0px !important; ">
-				    <a href="#"><span class="glyphicon glyphicon-list-alt"> Owe </span></a> <!-- Owe -->
-				    <hr style="margin-bottom: 0px !important; ">
-				    <a href="#"> <span class="glyphicon glyphicon-print"> Report </span> </a> <!-- Report -->
-				    <hr style="margin-bottom: 0px !important; ">
-				</div>
-			    <div class="navbar-brand">
-                    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰</span>
-                </div>
-				            
-				
-			</div> 
+				<nav class="collapse navbar-collapse" id="bs-navbar">
+					
+					<!-- <form action="{% url 'product:product_search' %}" method="get" class="navbar-form navbar-left">
+						{% csrf_token %}
+						<div class="form-group">
+						    <span class="glyphicon glyphicon-search" style="padding-left:10px; padding-top: 5px; color:gray; margin-right: 10px; font-size: 17px; background-color: #ef9a9a!important; border-radius: 5px 5px; ">
+						    	<input type="text" class="form-control" name= "q" value="" placeholder="Enter product name, id, code" required style="border-radius:0px 5px 5px 0px !important; !important;  border: none aliceblue; height: 43px; margin-top: -5px; width: 450px;">
+						    </span>
+							<button type="submit" class="btn btn-primary" style="height: 43px; margin-top: -8px;">Search</button>
+						    
+						</div>
+					  
+					</form>
+					 -->
 
+					{% if user.is_authenticated %}
+						<ul class="nav navbar-nav navbar-right">
 
-
-			
-			<nav class="collapse navbar-collapse" id="bs-navbar"> 
-				<!-- <ul class="nav navbar-nav"> 
-					<li class="active">
-						<a href="#">
-							<span class="glyphicon glyphicon glyphicon-home" aria-hidden=true> Home </span>
-						</a>
-					</li>
-					<li class="active">
-						<a href="#">
-							<span class="glyphicon glyphicon-music" aria-hidden=true> Jobs </span>
-						</a>
-					</li>
-					<li class="active">
-						<a href="#">
-							<span class="glyphicon glyphicon-phone-alt" aria-hidden=true> Contact </span>
-						</a>
-					</li>
-				</ul> --> 
-		
-				
-				{% if user.is_authenticated %}
-					<ul class="nav navbar-nav navbar-right">
-						{% if user.profile.is_recruit == "1" %}
+							{% if user.profile.is_recruit == "1" %}
+								<li class="">
+									<a href="#">
+										<span class="glyphicon glyphicon-bullhorn" aria-hidden=true> Recruitment </span>
+									</a>
+								</li>
+								
+							{% endif %}
 							<li class="">
 								<a href="#">
-									<span class="glyphicon glyphicon-bullhorn" aria-hidden=true> Recruitment </span>
+									<span class="glyphicon glyphicon glyphicon-user" aria-hidden=true> {{ user.username }} </span>
 								</a>
 							</li>
-							
-						{% endif %}
-						<li class="">
-							<a href="#">
-								<span class="glyphicon glyphicon glyphicon-user" aria-hidden=true> {{ user.username }} </span>
-							</a>
-						</li>
-						<li class="">
-							<a href="{% url 'usercontrol:auth_logout' %}">
-								<span class="glyphicon glyphicon-off" aria-hidden=true> Logout </span>
-							</a>
-						</li>
-					</ul>
+							<li class="">
+								<a href="{% url 'usercontrol:auth_logout' %}">
+									<span class="glyphicon glyphicon-off" aria-hidden=true> Logout </span>
+								</a>
+							</li>
+						</ul>
 
-				{% else %}
-				    
-				    <ul class="nav navbar-nav navbar-right">
-						
-						<li class="">
-							<a href="{% url 'usercontrol:login' %}">
-								<span class="glyphicon glyphicon-user" aria-hidden=true> Login </span>
-							</a>
-						</li>
-						<li class="">
-							<a href="#">
-								<span class="glyphicon glyphicon-registration-mark" aria-hidden=true> Register </span>
-							</a>
-						</li>
-					</ul>
-				{% endif %}	
-				</ul> 
-			</nav> 
-		</div> 
-	</header>
+					{% else %}
+					    
+					    <ul class="nav navbar-nav navbar-right">
+							
+							<li class="">
+								<a href="{% url 'usercontrol:login' %}">
+									<span class="glyphicon glyphicon-user" aria-hidden=true> Login </span>
+								</a>
+							</li>
+							<li class="">
+								<a href="#">
+									<span class="glyphicon glyphicon-registration-mark" aria-hidden=true> Register </span>
+								</a>
+							</li>
+						</ul>
+					{% endif %}	
+					</ul> 
+				</nav> 
+			</div> 
+		</header>
 
 	<main class="bd-content p-5" id="content" role="main">
-		<!-- <div class="container bs-docs-container" style="min-height: 650px; background-color: white;"> -->
+		
 		<div class="container bs-docs-container" style="min-height: 690px; ">
 			{% block body %}
 
 			{% endblock %}
 		</div>
 
-		<!-- {% block plugin %}
-		{% endblock %} -->
-
 	</main>
 
 	{% block javascript %}
 		
 	{% endblock %}
+</div>
 </body>
 </html>
