@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+
 from datetime import date
 from django.conf import settings
 import os
@@ -9,11 +10,14 @@ from location.models import Location
 from product.models import Product
 from django.core.validators import RegexValidator
 
+from django.forms import ModelForm
+
+
 class Customer(models.Model):
 	full_name = models.CharField(max_length=255, primary_key=True)
 	phone_number = models.CharField(max_length=50, blank=True)
 	email = models.CharField(max_length=255, blank=True)
-	province = models.ForeignKey(Location, on_delete=models.CASCADE)
+	province = models.ForeignKey(Location, related_name='province_location', on_delete=models.CASCADE)
 	address = models.TextField()
 	description = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
@@ -21,7 +25,8 @@ class Customer(models.Model):
 	is_status = models.BooleanField(default=True)
 
 	def __str__ (self):
-	 	return self.full_name 
+	 	return str(self.full_name) +'-'+ str(self.province)
+
 
 	class Meta:
 	    ordering = ['created_at']
@@ -63,6 +68,38 @@ class SaleInvoice(models.Model):
 
 	class Meta:
 		ordering = ["-created_at", "-updated_at"]
+		
+STATUS_CHOICES = (
+	('NO', 'No'),
+    ('FULL', 'Full'),
+    ('OWE', 'Owe'),
+)
+class Payment(models.Model):
+	invoice = models.ForeignKey(SaleInvoice, related_name='payment_invoice', on_delete = models.CASCADE)
+	pay_amount = models.FloatField(default=0.0)
+	remain = models.FloatField(default=0.0)
+	pay_status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	pay_date = models.DateTimeField(blank=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__ (self):
+	 	return str(self.invoice )
+
+	class Meta:
+		ordering = ["-created_at", "-updated_at"]
+		def __unicode__(self):
+			return self.invoice
+	
+class SaleInvoiceForm(ModelForm): 
+	def __init__(self, *args, **kwargs): 
+		super(SaleInvoiceForm, self).__init__(*args, **kwargs)                       
+		self.fields['user'].disabled = True		
+	class Meta:
+		fields = ['user']
+		# model = SaleInvoice
+
 
 class SaleInvoiceItem(models.Model):
 	invoice = models.ForeignKey(SaleInvoice, related_name='sale_invoice', on_delete=models.CASCADE)
@@ -77,6 +114,7 @@ class SaleInvoiceItem(models.Model):
 	
 	def __str__ (self):
 		return str(self.invoice)
+
 	class Meta:
 		ordering = ["-created_at", "-updated_at"]
 

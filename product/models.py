@@ -12,18 +12,7 @@ from location.models import Location
 # from tinymce.models import HTMLField
 
 # Create your models here.
-class ProductCategory(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-    is_status = models.BooleanField(default=True)
-    def __str__ (self):
-    	# return self.name + ' ' + str(self.created_at)
-    	return self.name 
 
-    class  Meta:
-    	ordering = ['-created_at']
 
 def upload_location(instance, filename):
 		filebase, extension = filename.split(".")
@@ -38,6 +27,20 @@ def validate_file_extension(value):
 def user_directory_path(request, filename):
 	# return "files/users/%s/%s" % (request.user.id, filename)
     return '/'.join(['content', request.name, filename])
+
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=255)
+    icon = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    is_status = models.BooleanField(default=True)
+    def __str__ (self):
+    	# return self.name + ' ' + str(self.created_at)
+    	return self.name 
+
+    class  Meta:
+    	ordering = ['-created_at']
 
 def increment_product_number():
 	last_product = Product.objects.all().order_by('id').last()

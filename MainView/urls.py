@@ -8,7 +8,7 @@ from django.contrib.auth import logout
 
 app_name = 'MainView'
 urlpatterns = [
-     url(r'^', views.IndexView.as_view(), name='main_view_index'),
+     url(r'', views.IndexView.as_view(), name='main_view_index'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,98 @@
+.main_sell
+{
+	min-height: 100%;
+	height: auto;
+	border: 1px solid red;
+}
+
+.sell_left
+{
+	min-height: 680px; 
+	height: auto; 
+	border-right: 1px solid #f1f1f1;
+	overflow-y: scroll; 
+	
+}
+
+.sell_left_action
+{	
+	background-color: #DEEFF7;
+	padding:5px 5px;
+	margin-top: 10px;
+	/*margin:5px 5px; */
+}
+
+.pay_button
+{
+	float: right;
+    text-align: center;
+    border-radius: 0px 0px !important;
+    height: 43px;
+    width: 100px;
+}
+.action_button
+{
+	width: 88px;
+}
+
+
+.sell_product
+{
+	min-height: 680px; 
+	height: auto; 
+	border-left: 1px solid #f1f1f1;
+	overflow-y: scroll; 
+}
+
+.sell_left td
+{
+	font-size: 12pt;
+}
+
+
+.input_number
+{
+	width: 38px; 
+	height:38px; 
+	text-align: center;
+}
+
+.sell_product ul li
+{
+	text-decoration: none;
+	display: inline;
+	font-size: 12pt;
+}
+.sell_product a
+{
+	text-align: center; !important;
+	/*color:#4E5152;*/
+	/*border-bottom: 2px solid #d9534f;*/
+	margin-left: 20px;
+
+}
+
+.sell_product a:hover
+{
+	text-decoration: none;
+}
+
+
+.table_style
+{
+	border-bottom: 1px solid #f1f1f1; 
+	height: 60px;
+}
+
+.sell_left table tr
+{
+	border-bottom: 1px solid #f1f1f1; 
+	height: 60px;
+}
+
+.show_hide
+{
+	display: none;
+}
+
+

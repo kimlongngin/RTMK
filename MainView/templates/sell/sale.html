@@ -1,0 +1,384 @@
+{% extends 'product/base.html' %}
+
+{% block title %} Invoices detail {% endblock %}
+
+{% block body %}
+	
+	<div class="row" style="border: 0px solid #f1f1f1; margin-bottom: 20px;">
+		
+
+
+		<div class="col-md-5 sell_left">
+
+			<div id="sell_left">
+				<div><h3 style="color:#337ab7; text-align: center;"> Welcome for our customer </h3></div>
+				<div style="padding-top:10px;"><p> <span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span>{{ invoice_number }}</span></p></div>
+				<form action="" method="POST">
+					<div class="row">
+						<div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px; height: auto; ">
+							<table style="width: 100%; border:0px solid gray;">
+								<thead>
+									<tr style="text-align: right;">
+										<th style="text-align: right;">Item</th>
+										<th style="text-align: right;">Quantity</th>
+										<th style="text-align: right;">Unit price</th>
+										<th style="text-align: right;">Subtotal</th>
+										<th style="text-align: right;">Remove</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+							<table style="width: 100%; border:0px solid gray;" id="t_product">
+								
+							</table>
+						</div>
+					</div>
+
+					<div class="row sell_left_action">
+						<div class="col-md-6">
+							<p>Total: $<span id="total">00.00</span></p>
+							<p>Discount: <span id="discount">10%</span></p>
+							<p>Tax: <span id="tax">$90.00</span></p>
+						</div>
+
+						<div class="col-md-6">
+							 <button type="submit" class="btn btn-success pay_button"><span class="glyphicon glyphicon-usd"></span> Payment </button>
+						</div>
+
+						<div class="col-md-12" style="text-align: right;">
+							
+							<button type="button" class="btn btn-danger action_button" onclick="cancelSelling()"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+							
+							<button type="button" class="btn btn-info action_button"> <span class="glyphicon glyphicon-floppy-save"></span> Save</button>
+							
+							<button type="button" class="btn btn-info action_button"><span class="glyphicon glyphicon-flash"></span>Discount</button>
+
+							<button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-plus"></span> New</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+
+		<div class="col-md-7 sell_product" id="sell_product" style="padding-top: 10px;">
+			{% if all_categories %}
+				<ul>
+					{% for i in all_categories %}
+						<li>
+							<a href="{% url 'sell:filter_category' %}" class="btn btn-warning" id = "request_product{{ i.id }}" onclick="requestProduct('{{ i.id }}'); return false;"> {{ i.name }} </a>
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+
+				<div id = "product_content">
+
+					{% if all_products %}
+					
+						<div data-example-id="thumbnails-with-custom-content" style="margin-top: 20px;" >
+						    <div class="row" id = "list_product">
+								{% for i in all_products %}
+							      	<div class="col-sm-6 col-md-4" onclick="moveObject(id = '{{ i.id }}', name = '{{ i.name }}', price = '{{ i.price }}', special_price ='{{ i.special_price }}' )">
+								        <div class="thumbnail">
+								        	{% if i.default_image %}
+												<img data-src="holder.js/100%x200" alt="100%x200" src = "../../../{{ i.default_image.url }}" style="height: 120px; width: 70%; display: block;">
+								        	{% else %}
+												<img data-src="holder.js/100%x200" alt="100%x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjQyIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDI0MiAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MjAwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTZjZDhjN2MxMmEgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMnB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xNmNkOGM3YzEyYSI+PHJlY3Qgd2lkdGg9IjI0MiIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI4OS44NTE1NjI1IiB5PSIxMDUuNCI+MjQyeDIwMDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="height: 120px; width: 70%; display: block;">
+								        	{% endif %}
+								         
+									        <div class="caption" style="text-align: center !important;">
+									        	<h4>{{ i.name }}</h4>
+									        	{% if special_price > 0 %}
+									        		<h6>${{ i.special_price |floatformat:2 }}</h6>
+									        	{% else %}
+									        		<h6>${{ i.price |floatformat:2 }}</h6>
+									        	{% endif %}
+									        </div>
+								        </div>
+							      	</div> 
+								{% endfor %}
+							</div>
+						</div>
+				{% endif %}
+			</div>
+			
+		</div>
+
+
+
+	<script type="text/javascript">
+
+		function requestProduct(id)
+		{
+
+
+			var urli = $('#request_product'+id).attr('href');
+			$.ajax({
+		    	url: String(urli),
+		    	type: "GET",
+		    	contentType: "application/json",
+		    	data: {
+		    		"myid": id,
+		    		csrfmiddlewaretoken: '{{ csrf_token }}'
+		    	},
+		    	success: function (data) {
+
+		    		str = '';
+					if (data.length > 0){
+						for(i=0 ; i < data.length; i++)
+						{	
+							
+							var id = data[i].pk;
+							var name = "'"+data[i].fields.name+"'";
+							var product_number = data[i].fields.product_number;
+							var price = data[i].fields.price;
+							var special_price = data[i].fields.special_price;
+							var default_image = data[i].fields.default_image;
+
+							var str_default_image ="";
+							if (default_image)
+							{
+								str_default_image = '<img data-src="holder.js/100%x200" alt="100%x200" src = "../../../media/'+default_image+'" style="height: 120px; width: 70%; display: block;">';
+							}else{
+								str_default_image = '<img data-src="holder.js/100%x200" alt="100%x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjQyIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDI0MiAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MjAwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTZjZDhjN2MxMmEgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMnB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xNmNkOGM3YzEyYSI+PHJlY3Qgd2lkdGg9IjI0MiIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI4OS44NTE1NjI1IiB5PSIxMDUuNCI+MjQyeDIwMDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="height: 120px; width: 70%; display: block;">'
+							}
+
+							var str_price = 0.0;
+
+							if(special_price > 0){ 
+								str_price = '<h6> $'+ special_price + '</h6>';
+							}else{ 
+								str_price = '<h6> $'+ price + '</h6>';
+							} 
+
+							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + name + '</h4>' + str_price +'</div></div></div>';
+						}
+					}
+					document.getElementById("list_product").innerHTML = str;
+					
+				}, error: function(xhr,errmsg,err){
+					console.log("error");
+					console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+				}
+		    });
+		}
+	
+
+		var productObjects = []; // decalre array object
+		let idArray = []; // store id of produce 
+		var found = false; // check condition true/false but by default we set as false
+
+		// hide or display all object in left-side, showing incase has some orders inversely, hidding incase no object in order box 'sell_left'
+		if (idArray.length > 0)
+		{
+			document.getElementById('sell_left').style = 'display:block;'
+		}else{
+			document.getElementById('sell_left').style = 'display:none;'
+		}
+
+		// search objct in array to add more or finish adding
+		function searchArray(id, objArray)
+		{
+			if (objArray.length > 0)
+			{
+				for (i =0; i< objArray.length; i++)
+				{
+					if (objArray[i] === Number(id))
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		// Move product object from product list on left side box to selling at right side box 
+		function moveObject(id, name, price, special_price)
+		{
+			id = id;
+			name = name;
+			price = price;
+			special_price =  special_price;
+			
+			var found = searchArray(id, idArray);
+			if (idArray.length > 0)
+			{
+				if (found === true)
+				{
+					alert("This product already exist in cart!");
+					return;
+				}else{
+					console.log(false);
+					idArray.push(Number(id));
+					// add object to Json Array
+					productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1)});
+					found = false;
+				}
+			}else{
+				// add object to Json Array
+				idArray.push(Number(id));
+				productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1)});
+			}
+
+
+			let total = 0;
+			for (var i = 0; i < productObjects.length; i++) {
+				total = total + (productObjects[i].Unit * productObjects[i].Price);
+			}
+			document.getElementById("total").innerHTML = total;
+			
+
+			var MyTable = document.getElementById("t_product"); 
+            // insert new row. 
+            var NewRow = MyTable.insertRow(0); 
+           	NewRow.id = "irow"+ id;
+            var iname = NewRow.insertCell(0);
+            var ibox = NewRow.insertCell(1);  
+            var iunit_price = NewRow.insertCell(2);
+            var iprice = NewRow.insertCell(3); 
+            var idelete = NewRow.insertCell(4);
+
+            iname.innerHTML = name; 
+            ibox.innerHTML ='<input type="number" value=1  class="input_number" onclick="countNumber('+id+')" onkeyup="myCountNumber('+id+')" id = "unit'+id+'" > x';
+            iunit_price.innerHTML = '$<input type="text" name="" value= "'+ price +'"" style="border: none !important; width: 60px;" id="price_per_unit'+id+'">';
+            iprice.innerHTML = '$<input type="text" name="" iprice style="border: none !important; width: 60px;" id="sub_total'+id+'" value = "'+ price + '">';
+            idelete.innerHTML ='<button type="button" value="Delete" onclick="deleteRow(this, '+id+')" style="background-color: none !important; border:none !important;"> <span class="glyphicon glyphicon-remove" style="color:red; font-size: 15pt;"></span></button>'
+            unit = document.getElementById('unit'+id+'').value;
+			price_per_unit = document.getElementById('price_per_unit'+id+'').value;
+			document.getElementById('sub_total'+id+'').value = price_per_unit;
+
+			if (idArray.length > 0)
+			{
+				document.getElementById('sell_left').style = 'display:block;'
+			}else{
+				document.getElementById('sell_left').style = 'display:none;'
+				// document.getElementById('sell_left').innerHTML ="<h5> Welcome ! </h5>"
+			}
+		}
+
+
+		// Click on increase and descrease number in box
+		function countNumber(id)
+		{
+			unit = document.getElementById('unit'+id).value;
+			price_per_unit = document.getElementById('price_per_unit'+id).value;
+			sub_total = unit * price_per_unit;
+			document.getElementById('sub_total'+id).value = sub_total;
+
+			for (var i = 0; i < productObjects.length; i++) {
+				if (Number(productObjects[i].Id) === Number(id)) {
+					productObjects[i].Unit = Number(unit);
+					break;
+				}
+			} 
+			console.log(productObjects);
+			// Total amount number
+			let total = 0;
+			for (var i = 0; i < productObjects.length; i++) {
+				total = total + (productObjects[i].Unit * productObjects[i].Price);
+			}
+			document.getElementById("total").innerHTML = total;
+		}
+
+		// Keyup for increasing and descreasing number in box
+		function myCountNumber(id)
+		{
+			unit = document.getElementById('unit'+id).value;
+			if (unit <=0 )
+			{
+				document.getElementById('sub_total'+id).value = 0;
+			}else{
+				price_per_unit = document.getElementById('price_per_unit'+id).value;
+				sub_total = unit * price_per_unit;
+				document.getElementById('sub_total'+id).value = sub_total;
+			}
+
+			for (var i = 0; i < productObjects.length; i++) {
+				if (Number(productObjects[i].Id) === Number(id)) {
+					productObjects[i].Unit = Number(unit);
+					break;
+				}
+			} 
+			console.log(productObjects);
+
+			// Total amount number
+
+			let total = 0;
+			for (var i = 0; i < productObjects.length; i++) {
+				total = total + (productObjects[i].Unit * productObjects[i].Price);
+			}
+			document.getElementById("total").innerHTML = total;
+		}
+
+
+
+
+		// Delete row from table
+		function deleteRow(r, id) {
+			var i = r.parentNode.parentNode.rowIndex;
+			document.getElementById("t_product").deleteRow(i);
+
+			// remove object from array
+			var index = idArray.indexOf(id);
+			if (index > -1) {
+				idArray.splice(index, 1);
+			}
+
+			// remove object from json array
+			const iindex = productObjects.findIndex(x => Number(x.Id) === id);
+			console.log(iindex);
+			if (iindex !== undefined) productObjects.splice(iindex, 1);
+			console.log("After removal:", productObjects);
+			
+			// show and hide order box 'sell_left'
+			if (idArray.length > 0)
+			{
+				document.getElementById('sell_left').style = 'display:block;'
+			}else{
+				document.getElementById('sell_left').style = 'display:none;'
+			}
+		}
+	
+		//  Remove all row from table 
+		function cancelSelling()
+		{
+			if (confirm("Are you sure to cancel?")) {
+				idArray = []; // reset array
+				productObjects = []; // reset json array
+				$("#t_product tr").remove(); 
+				document.getElementById('sell_left').style = 'display:none;'
+			} else {
+				return ;
+			}
+		}
+
+		// Start new order if the previous order not yet saved, so it will ask to save first if not then start a new order
+		function newOrder()
+		{
+			if (idArray.length > 0)
+			{
+				alert('Please save existing order first!');
+			}else{
+				idArray = []; // reset array
+				productObjects = []; // reset json array
+				document.getElementById('sell_left').style = 'display:none;'
+			}
+		} 
+
+		// Ask for leaving from page
+		$(window).bind('beforeunload', function(){
+		  return 'Are you sure you want to leave?';
+		});
+
+
+		
+		
+		
+		
+		
+		
+	</script>
+
+{% endblock %}

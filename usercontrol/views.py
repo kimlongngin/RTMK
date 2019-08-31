@@ -38,13 +38,17 @@ class UserLoginView(View):
 		form = self.form_class(request.POST)
 		username = request.POST['username']
 		password = request.POST['password']
-		print(username)
+	
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return redirect('usercontrol:index')
+			return redirect('MainView:main_view_index')
 		else:
 			return render(request, self.template_name, {'form':form})
+
+
+# User Login from the browser for the end user 
+
 
 
 class UserFormView(View):
@@ -57,6 +61,7 @@ class UserFormView(View):
 		
 	def post(self, request):
 		form = self.form_class(request.POST)
+
 		if form.is_valid():
 			user = form.save(commit=False) 
 			username = form.cleaned_data['username']  

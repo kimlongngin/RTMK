@@ -48,7 +48,7 @@
 					            				{{ iuser.username }}
 					            			{% endif %}
 						            	</p>
-										<div class="user_sub_detail" style="text-align: center; margin-bottom: 15px;"> 
+										<div class="user_sub_detail" style="text-align: center; margin-bottom: 15px; height: 55px;"> 
 											<p style="margin:auto; text-align: center;" >
 												Age: {{ i.age }} years old, Branch: 
 												
@@ -63,7 +63,7 @@
 														{% if j.productinstock_set.all.count > 0 %}
 															{% if j.productinstock_set.all.count > 1%}
 																<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ j.id }}" data-whatever="@mdo">
-									 								{{ j.productinstock_set.all.count }} products 
+									 								<span class="badge"> {{ j.productinstock_set.all.count }} </span> products 
 									 							</button>
 
 																<div class="modal fade" id="{{ j.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
@@ -131,7 +131,7 @@
 
 
 															{% else %}
-																<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ j.id }}" data-whatever="@mdo">{{ j.productinstock_set.all.count }} product </button>
+																<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ j.id }}" data-whatever="@mdo"><span class="badge">{{ j.productinstock_set.all.count }}</span> product </button>
 
 																<div class="modal fade" id="{{ j.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 																  <div class="modal-dialog" role="document">
@@ -192,22 +192,18 @@
 																		{% endfor %}
 																      </div>
 
-
-
 																    </div>
 																  </div>
 																</div>
 
 															{% endif %}
 
-															
-
 														{% else %}
-															0 product
+															<span class="badge">0</span> product
 														{% endif %}
 													{% endfor %}
 												{% else %}
-													None, <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#0" data-whatever="@mdo"> 0 product </button>
+													None, <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#0" data-whatever="@mdo"><span class="badge">0</span> product </button>
 
 												{% endif %} 
 											</p>

@@ -56,8 +56,11 @@
 
 .user_detail
 {
+	min-height: 92px;
 	padding: 5px 5px;
 	text-align: center;
+	height: auto;
+
 }
 
 .user_avatar_wrapper

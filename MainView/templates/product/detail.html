@@ -15,7 +15,7 @@
 				</div>
 
 	  			<div class="col-md-5">
-	  				<div>
+	  				<div style="padding-bottom: 5px; border-bottom: 1px solid #f1f1f1;">
 		  				<p class="product_title_detail" style="margin-bottom: 25px;"> {{ product.name }} </p>
 		  				<!-- <p> Rate: 1 | 2 | 3 | 4 | 5 </p>  -->
 							<p class="rate">
@@ -33,15 +33,13 @@
 		  					<p> 
 		  						<span class="product_reivew"> {{ product.review | add:1 }} custom reviews </span>  | <span class="product_reivew"> 50 custom orders</span>
 		  					</p>
-		  				
-		  				<hr/>
 					</div>
 
 					<div>
 						{% if product.special_price and product.special_price > 0 %}
-							<p class="product_detail_price"> Special price: $ {{ product.special_price }}</p>
+							<p class="product_detail_price" style="margin-top:10px;"> Special price: $ {{ product.special_price }}</p>
 						{% else %}
-							<p>Price {{ product.price }}</p>
+							<p style="margin-top:10px;">Price {{ product.price }}</p>
 						{% endif %}
 							<p>Product ID: {{ product.product_number }}</p>
 							<p>Serial Number: {{ product.serial_number }}</p>

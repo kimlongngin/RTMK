@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 from django.views.generic import View, TemplateView 
-from product.models import Product, Promotion
+from product.models import Product, Promotion, ProductCategory
 from customer.models import Customer
 
 from django.contrib.auth.models import User
@@ -24,6 +24,10 @@ class IndexView(SuccessMessageMixin, generic.ListView):
 	template_name = 'MainView/default.html'
 	context_object_name = 'all_product'
 	paginate_by = 20
+
+	@method_decorator(login_required(''))
+	def dispatch(self, request, *args, **kwargs):	
+		return super(self.__class__, self).dispatch(request, *args, **kwargs)
 	
 	def get_queryset(self):
 		return Product.objects.filter(is_status=True).order_by('-created_at')
@@ -33,7 +37,8 @@ class IndexView(SuccessMessageMixin, generic.ListView):
 		icustomer = Customer.objects.count()
 		iproduct = Product.objects.count()
 		ipromotion = Promotion.objects.count()
-		return render(request, self.template_name, { 'count_user': iuser, 'count_customer':icustomer, 'count_product': iproduct, 'count_promotion':ipromotion })
+		icategory = ProductCategory.objects.count()
+		return render(request, self.template_name, { 'count_user': iuser, 'count_customer':icustomer, 'count_product_category': icategory, 'count_promotion':ipromotion })
 
 # class DetailView(generic.DetailView):
 # 	template_name =  'product/detail.html'

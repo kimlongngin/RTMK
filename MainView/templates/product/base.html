@@ -11,7 +11,8 @@
 
     <!-- Latest compiled and minified CSS -->
 	<!-- /<script  type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"> </script> -->
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
    
 	<!-- Latest compiled and minified CSS -->
@@ -38,6 +39,8 @@
 	<link rel="stylesheet"  href="{% static 'css/homepage.css' %}">
 	<link rel="stylesheet"  href="{% static 'css/stock.css' %}">
 	<link rel="stylesheet"  href="{% static 'css/user.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/category.css' %}">
+	<link rel="stylesheet"  href="{% static 'css/sell.css' %}">
 	<!-- <link rel="stylesheet"  href="{% static 'css/blog.css' %}">
 	<link rel="stylesheet"  href="{% static 'css/flex.scss' %}"> -->
 
@@ -60,25 +63,31 @@
 					</button> 
 					
 					<!-- <a class="navbar-brand" href="#"> RTsite </a> -->
-					
-					<div id="mySidenav" class="sidenav">
-					    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-					    <a href="{% url 'MainView:main_view_index' %}"><span class="glyphicon glyphicon-th-large"> Dashboard </span></a> <!-- Stock --> 
-					    <hr style="margin-bottom: 0px !important; "> 
-					    <a href="{% url 'product:product_in_stock' %}"><span class="glyphicon glyphicon-book"> Stock </span></a> <!-- Stock --> 
-					    <hr style="margin-bottom: 0px !important; "> 
-					    <a href="{% url 'product:product_index' %}"><span class="glyphicon glyphicon-list-alt"> Product </span></a>
-					    <hr style="margin-bottom: 0px !important; ">
-					    <a href="#"><span class="glyphicon glyphicon-shopping-cart"> Sale </span></a> <!-- Sale -->
-					    <hr style="margin-bottom: 0px !important; ">
-					    <a href="#"><span class="glyphicon glyphicon-list-alt"> Owe </span></a> <!-- Owe -->
-					    <hr style="margin-bottom: 0px !important; ">
-					    <a href="#"> <span class="glyphicon glyphicon-print"> Report </span> </a> <!-- Report -->
-					    <hr style="margin-bottom: 0px !important; ">
-					</div>
-				    <div class="navbar-brand">
-	                    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰</span>
-	                </div>
+					{% if user.is_authenticated %}
+						<div id="mySidenav" class="sidenav">
+						    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+						    <a href="{% url 'MainView:main_view_index' %}"><span class="glyphicon glyphicon-th-large"> Dashboard </span></a> <!-- Stock --> 
+						    <hr style="margin-bottom: 0px !important; "> 
+						    <a href="{% url 'product:product_in_stock' %}"><span class="glyphicon glyphicon-book"> Stock </span></a> <!-- Stock --> 
+						    <hr style="margin-bottom: 0px !important; "> 
+						    <a href="{% url 'product:product_index' %}"><span class="glyphicon glyphicon-list-alt"> Product </span></a>
+						    <hr style="margin-bottom: 0px !important; ">
+						    <a href="{% url 'sell:sale_view' %}"><span class="glyphicon glyphicon-shopping-cart"> Sale </span></a> <!-- Sale -->
+						    <hr style="margin-bottom: 0px !important; ">
+						    <a href="#"><span class="glyphicon glyphicon-list-alt"> Owe </span></a> <!-- Owe -->
+						    <hr style="margin-bottom: 0px !important; ">
+						    <a href="#"> <span class="glyphicon glyphicon-print"> Report </span> </a> <!-- Report -->
+						    <hr style="margin-bottom: 0px !important; ">
+						</div>
+
+					    <div class="navbar-brand">
+		                    <span style="font-size:30px;cursor:pointer" onclick="openNav()">☰</span>
+		                </div>
+		            {% else %}
+		            	
+		                <a class="navbar-brand" href="{% url 'product:product_index' %}"> RTMK </a>
+		                
+		            {% endif %}
 					            
 					
 				</div> 
@@ -131,11 +140,11 @@
 									<span class="glyphicon glyphicon-user" aria-hidden=true> Login </span>
 								</a>
 							</li>
-							<li class="">
+							<!-- <li class="">
 								<a href="#">
 									<span class="glyphicon glyphicon-registration-mark" aria-hidden=true> Register </span>
 								</a>
-							</li>
+							</li> -->
 						</ul>
 					{% endif %}	
 					</ul> 
@@ -152,6 +161,16 @@
 		</div>
 
 	</main>
+
+	<footer>
+		<div style="width: 100%; height: 70px; background-color: #3b4045 !important">
+			<div class="container" style="with:100%; margin-left: auto !important margin-right:auto;">
+				<p style="color: white; text-align: center; padding-top: 25px;">Product by AI-Cambodia</p>
+				<p>012323288</p>
+			</div>
+		</div>
+		
+	</footer>
 
 	{% block javascript %}
 		

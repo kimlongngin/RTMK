@@ -13,22 +13,38 @@
 				<div class="home_title">
 					<p> <span class="glyphicon glyphicon-list-alt">  </span> Product list </p>
 				</div>
-			
 
-				<div class="head_pad_index" style="margin-bottom: 70px;">
-					<form action="{% url 'product:product_search' %}" method="get" class="navbar-form navbar-left">
-							{% csrf_token %}
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										
-											<input type="text" class="form-control" name= "q" value="" placeholder="Enter product name, id, code" required style="border-radius:5px 5px 5px 5px !important; !important;  height: 43px; margin-top: 0px; width: 100%; ">
-									</div>
-									<button type="submit" class="btn btn-primary" style="height: 40px; ">Search</button>
-								</div>
-							</div>
-					</form>
+				<div class="head_pad_index" style="margin-bottom: 0px;">
+
+					<nav class="navbar navbar-default" style=" border: none !important; box-shadow: none !important; background: none !important;">
+				      <div class="container-fluid" style="padding-left: 0px !important;">
+				        
+				        <div class="navbar-header">
+				          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="true" style="border:none !important;">
+				            <span class="glyphicon glyphicon-search"></span>
+				          </button>
+				          <!-- <p class="navbar-brand">Find your product here</p> -->
+				        </div>
+
+				        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+							<form class="form-inline" action="{% url 'product:product_search' %}" method="get" style="margin-top: 4px;">
+		  						{% csrf_token %}
+		  						<div class="form-group">
+							    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+							    <div class="input-group">
+							    <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+							      <input type="text" class="form-control" name= "q" value="" placeholder="Enter product name, id, code">		
+							  	</div>
+							  </div>
+							  <button type="submit" class="btn btn-primary">Seach</button>
+							</form>
+				        </div>
+
+
+				      </div>
+				    </nav>
 				</div>
+
 				
 				<div class="row row-no-gutters">
 					{% for product in all_product %}

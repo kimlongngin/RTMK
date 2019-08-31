@@ -25,7 +25,8 @@ SECRET_KEY = '9tln_vs)q6ta#66421q&+=qu)+&b)eeumaz%q76bh+*yi#^f%$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.3', '127.0.0.1', 'localhost', 'cbb11a15.ngrok.io']
+# ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
   
     'productcategory',
     'product',
@@ -46,8 +48,7 @@ INSTALLED_APPS = [
     'sell',
     'usercontrol',
     'MainView',
-    'customer',
-
+    'customer'
 ]
 
 
@@ -126,7 +127,9 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Absolute path to the media directory
 #  LOGIN_REDIRECT_URL = '/usercontrol/login/'
 LOGIN_URL = '/usercontrol/login/'
-LOGOUT_REDIRECT_URL = '/product'
+LOGIN_REDIRECT_URL = '/usercontrol'
+LOGOUT_REDIRECT_URL = '/usercontrol/login'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
