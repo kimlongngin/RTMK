@@ -10,6 +10,8 @@ app_name = 'sell'
 urlpatterns = [
     url(r'^$', views.SaleView.as_view(), name='sale_view'),
    	url(r'^filter_category/$', views.filter_category, name='filter_category'),
+   	url(r'^filter_product/$', views.filter_product, name='filter_product'),
+   	url(r'^filter_customer/$', views.filter_customer, name='filter_customer'),
    
 ]
 

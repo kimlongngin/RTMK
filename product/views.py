@@ -65,7 +65,7 @@ class DetailView(generic.DetailView):
 class SearchProductView(ListView):
 	model = Product
 	template_name = 'product/result_search.html'
-	paginate_by = 20
+	paginate_by = 100
 
 	
 
@@ -80,7 +80,7 @@ class ProductInStockView(SuccessMessageMixin, generic.ListView):
 	model = ProductInStock
 	template_name = 'product/stock_view.html'
 	context_object_name = 'all_product_in_stock'
-	paginate_by = 20
+	paginate_by = 100
 
 	@method_decorator(login_required(''))
 	def dispatch(self, request, *args, **kwargs):	
@@ -94,7 +94,7 @@ class CategoryListView(SuccessMessageMixin, generic.ListView):
 	model = ProductCategory
 	template_name = 'product/category_list.html'
 	context_object_name = 'all_product_category_ist'
-	paginate_by = 20
+	paginate_by = 100
 
 	@method_decorator(login_required(''))
 	def dispatch(self, request, *args, **kwargs):	
@@ -109,7 +109,7 @@ class CategoryProductView(SuccessMessageMixin, generic.ListView):
 	model = ProductCategory
 	template_name = 'product/category_product.html'
 	context_object_name = 'all_product'
-	paginate_by = 20
+	paginate_by = 100
 
 	@method_decorator(login_required(''))
 	def dispatch(self, request, *args, **kwargs):	

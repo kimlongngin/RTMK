@@ -30,7 +30,6 @@ def increment_invoice_number():
 	width = 6
 	invoice_number = last_invoice.invoice_number
 	invoice_int = int(invoice_number.split('INV')[-1])
-
 	new_invoice_int = invoice_int + 1
 	formatted = (width - len(str(new_invoice_int))) * "0" + str(new_invoice_int)
 	new_invoice_int = 'INV' + str(formatted)
@@ -50,19 +49,39 @@ class SaleView(SuccessMessageMixin, generic.ListView):
 		user = request.user
 
 		invoice_number = increment_invoice_number()
+		customer = Customer.objects.filter(is_status=True).order_by('-full_name')
 		data = ProductCategory.objects.filter(is_status=True).order_by('-created_at')
 		products = Product.objects.filter(is_status=True).order_by('-created_at')  
-		return render(request, self.template_name, {'all_categories': data, 'all_products':products, 'invoice_number': invoice_number, 'user':user}) 
+		return render(request, self.template_name, {'all_customers':customer, 'all_categories': data, 'all_products':products, 'invoice_number': invoice_number, 'user':user}) 
 
 def filter_category(request):
 	if request.is_ajax():
 		id = request.GET['myid']
-		
 		data = serializers.serialize('json', Product.objects.filter(product_category__id = id, is_status=True).order_by('-created_at') )
+		return HttpResponse(data, content_type="application/json")	
+	else:
+		return HttpResponse("<h1> Welcome !!! </h1>")
+
+def filter_product(request):
+
+	if request.is_ajax():
+		key_term = request.GET['key_term']
+		data = serializers.serialize('json', Product.objects.filter(name__contains=key_term, is_status=True) | Product.objects.filter(product_number = key_term, is_status=True) | Product.objects.filter(serial_number=key_term, is_status=True))
 		return HttpResponse(data, content_type="application/json")
 		
 	else:
 		return HttpResponse("<h1> Welcome !!! </h1>")
+
+def filter_customer(request):
+
+	if request.is_ajax():
+		key_term = request.GET['key_term']
+		data = serializers.serialize('json', Customer.objects.filter(full_name__contains=key_term,  is_status=True).order_by('full_name') | Customer.objects.filter(email__contains=key_term,  is_status=True).order_by('full_name') | Customer.objects.filter(phone_number__contains=key_term,  is_status=True).order_by('full_name'))
+		return HttpResponse(data, content_type="application/json")
+		
+	else:
+		return HttpResponse("<h1> Welcome !!! </h1>")
+
 		
 
 

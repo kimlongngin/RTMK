@@ -8,11 +8,45 @@
 		
 
 
-		<div class="col-md-5 sell_left">
+		<div class="col-md-6 sell_left">
+			<div><h3 style="color:#337ab7; text-align: center;"> Welcome all our customer </h3></div>
+			<div style="margin:auto; width:100%; text-align: center;">
+				<div class="md-form active-pink active-pink-2 mb-3 mt-0" style="margin-bottom: 10px; ">
+					<input type="hidden" value = "{% url 'sell:filter_product' %}" id = "url_search_client">
+					<input type="hidden" value ="{% url 'sell:filter_customer' %}" id="filter_customer">
+					<input class="form-control input_search" type="text" placeholder="Search client" aria-label="Search" id="id_search_client">
+					<!-- <br> -->
+					<!-- <input type="text" id="search" name="search"> -->
+					
 
+					<div class="form-group has-success has-feedback" id="select_result">
+					  <label class="control-label sr-only" for="inputGroupSuccess4">Input group with success</label>
+					  <div class="input-group">
+					    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+					    <!-- <input type="text" class="form-control" id="inputGroupSuccess4" aria-describedby="inputGroupSuccess4Status"> -->
+					  	<select class="form-control" id="results" aria-describedby="inputGroupSuccess4Status">
+						
+						</select>
+					  </div>
+					  <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+					  <span id="inputGroupSuccess4Status" class="sr-only">(success)</span>
+					</div>
+					<!-- <ul id="results">
+						<li><a href="#">India</a>
+						<li><a href="#">US</a>
+						<li><a href="#">UK</a>
+						<li><a href="#">Australia</a>
+					</ul> -->
+
+				</div>
+				
+				
+			</div>
 			<div id="sell_left">
-				<div><h3 style="color:#337ab7; text-align: center;"> Welcome for our customer </h3></div>
-				<div style="padding-top:10px;"><p> <span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span>{{ invoice_number }}</span></p></div>
+				<div style="padding-top:10px; margin:auto;width:100%; text-align: center;">
+					<p><span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span>{{ invoice_number }}</span></p>
+				</div>
+				
 				<form action="" method="POST">
 					<div class="row">
 						<div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px; height: auto; ">
@@ -54,8 +88,9 @@
 							<button type="button" class="btn btn-info action_button"> <span class="glyphicon glyphicon-floppy-save"></span> Save</button>
 							
 							<button type="button" class="btn btn-info action_button"><span class="glyphicon glyphicon-flash"></span>Discount</button>
-
+							<!--  <button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-wrench"></span> Repair</button> -->
 							<button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-plus"></span> New</button>
+							
 						</div>
 					</div>
 				</form>
@@ -63,7 +98,14 @@
 		</div>
 
 
-		<div class="col-md-7 sell_product" id="sell_product" style="padding-top: 10px;">
+		<div class="col-md-6 sell_product" id="sell_product" style="padding-top: 10px;">
+			
+			<!--  Block search box -->
+			<div class="md-form active-pink active-pink-2 mb-3 mt-0" style="margin-bottom: 10px; ">
+				<input type="hidden" value = "{% url 'sell:filter_product' %}" id = "idfilterproduct">
+				<input class="form-control input_search" type="text" placeholder="Search" aria-label="Search" id="input_search" onkeyup="searchProduct(this)">
+			</div>
+
 			{% if all_categories %}
 				<ul>
 					{% for i in all_categories %}
@@ -75,7 +117,6 @@
 			{% endif %}
 
 				<div id = "product_content">
-
 					{% if all_products %}
 					
 						<div data-example-id="thumbnails-with-custom-content" style="margin-top: 20px;" >
@@ -106,33 +147,141 @@
 			</div>
 			
 		</div>
-
+	</div>
+		
+	<div class="row" style="margin-top:20px; border:1px solid #f1f1f1; margin-bottom: 20px;">
+		<div class="col-md-12" id = "report_table">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>Client</th>
+						<th>Seller</th>
+						<th>Total</th>
+						<th>Date</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>INV001</td>
+						<td>Kimlong Ngin</td>
+						<td>Rithy</td>
+						<td>$100.00</td>
+						<td>2019/01/01</td>
+						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
+					</tr>
+					<tr>
+						<td>INV001</td>
+						<td>Kimlong Ngin</td>
+						<td>Rithy</td>
+						<td>$100.00</td>
+						<td>2019/01/01</td>
+						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
+					</tr>
+					<tr>
+						<td>INV001</td>
+						<td>Kimlong Ngin</td>
+						<td>Rithy</td>
+						<td>$100.00</td>
+						<td>2019/01/01</td>
+						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
+					</tr>
+					<tr>
+						<td>INV001</td>
+						<td>Kimlong Ngin</td>
+						<td>Rithy</td>
+						<td>$100.00</td>
+						<td>2019/01/01</td>
+						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 
 
 	<script type="text/javascript">
 
-		function requestProduct(id)
+
+		var results = document.getElementById("results");
+		var search = document.getElementById("id_search_client");
+		 
+		function getSearchResults(){
+			var searchVal = search.value;
+			urli = document.getElementById("filter_customer").value;
+			var xhr = new XMLHttpRequest();
+			var str = '';
+
+			if (searchVal == ""){
+				str = '';
+				document.getElementById('select_result').style.display ='none';
+				results.innerHTML = str;
+				return;
+			}else{
+				$.ajax({
+			    	url: String(urli),
+			    	type: "GET",
+			    	contentType: "application/json",
+			    	data: {
+			    		"key_term": searchVal,
+			    		csrfmiddlewaretoken: '{{ csrf_token }}'
+			    	},
+			    	success: function (data) {
+			    		
+			    		for(i=0 ; i < data.length; i++)
+						{	
+							var id = data[i].pk;
+							var phone_number = data[i].fields.phone_number;
+							var email = data[i].fields.email;
+							var province = data[i].fields.province;
+							str = str + '<select id="results"><option> '+ id +' </option></select>'
+						}
+						
+						results.innerHTML = str;
+						document.getElementById('select_result').style.display ='block';
+						results.style.display='block';
+						
+						console.log(data);
+						
+			    		
+			    	}, error: function(error)
+			    	{
+			    		console.log(error);
+			    		console.log("error");
+			    	}
+			    });
+			}
+		}
+		search.addEventListener("input", getSearchResults);
+
+
+
+
+
+		function searchProduct(e)
 		{
-
-
-			var urli = $('#request_product'+id).attr('href');
-			$.ajax({
-		    	url: String(urli),
-		    	type: "GET",
-		    	contentType: "application/json",
-		    	data: {
-		    		"myid": id,
-		    		csrfmiddlewaretoken: '{{ csrf_token }}'
-		    	},
-		    	success: function (data) {
-
-		    		str = '';
+			var key_term = e.value;
+			if (key_term !=""){
+				urli = document.getElementById("idfilterproduct").value;
+				
+				$.ajax({
+			    	url: String(urli),
+			    	type: "GET",
+			    	contentType: "application/json",
+			    	data: {
+			    		"key_term": key_term,
+			    		csrfmiddlewaretoken: '{{ csrf_token }}'
+			    	},
+			    	success: function (data) {
+			    		str = '';
 					if (data.length > 0){
 						for(i=0 ; i < data.length; i++)
 						{	
 							
 							var id = data[i].pk;
 							var name = "'"+data[i].fields.name+"'";
+							var show_name = data[i].fields.name;
 							var product_number = data[i].fields.product_number;
 							var price = data[i].fields.price;
 							var special_price = data[i].fields.special_price;
@@ -154,7 +303,68 @@
 								str_price = '<h6> $'+ price + '</h6>';
 							} 
 
-							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + name + '</h4>' + str_price +'</div></div></div>';
+							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + show_name + '</h4>' + str_price +'</div></div></div>';
+						}
+					}
+					document.getElementById("list_product").innerHTML = str;
+
+
+
+			    	}, error: function(error){
+			    		console.log(error);
+			    		console.log("error");
+			    	}
+				});
+			}else{
+				return;
+			}
+		}
+
+		function requestProduct(id)
+		{
+
+			
+			var urli = $('#request_product'+id).attr('href');
+			$.ajax({
+		    	url: String(urli),
+		    	type: "GET",
+		    	contentType: "application/json",
+		    	data: {
+		    		"myid": id,
+		    		csrfmiddlewaretoken: '{{ csrf_token }}'
+		    	},
+		    	success: function (data) {
+
+		    		str = '';
+					if (data.length > 0){
+						for(i=0 ; i < data.length; i++)
+						{	
+							
+							var id = data[i].pk;
+							var name = "'"+data[i].fields.name+"'";
+							var show_name = data[i].fields.name;
+							var product_number = data[i].fields.product_number;
+							var price = data[i].fields.price;
+							var special_price = data[i].fields.special_price;
+							var default_image = data[i].fields.default_image;
+
+							var str_default_image ="";
+							if (default_image)
+							{
+								str_default_image = '<img data-src="holder.js/100%x200" alt="100%x200" src = "../../../media/'+default_image+'" style="height: 120px; width: 70%; display: block;">';
+							}else{
+								str_default_image = '<img data-src="holder.js/100%x200" alt="100%x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMjQyIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDI0MiAyMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MjAwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTZjZDhjN2MxMmEgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMnB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xNmNkOGM3YzEyYSI+PHJlY3Qgd2lkdGg9IjI0MiIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI4OS44NTE1NjI1IiB5PSIxMDUuNCI+MjQyeDIwMDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="height: 120px; width: 70%; display: block;">'
+							}
+
+							var str_price = 0.0;
+
+							if(special_price > 0){ 
+								str_price = '<h6> $'+ special_price + '</h6>';
+							}else{ 
+								str_price = '<h6> $'+ price + '</h6>';
+							} 
+
+							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + show_name + '</h4>' + str_price +'</div></div></div>';
 						}
 					}
 					document.getElementById("list_product").innerHTML = str;
