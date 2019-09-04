@@ -11,6 +11,7 @@
 		<div class="col-md-6 sell_left">
 			<div><h3 style="color:#337ab7; text-align: center;"> Welcome all our customer </h3></div>
 			<div style="margin:auto; width:100%; text-align: center;">
+
 				<div class="md-form active-pink active-pink-2 mb-3 mt-0" style="margin-bottom: 10px; ">
 					<input type="hidden" value = "{% url 'sell:filter_product' %}" id = "url_search_client">
 					<input type="hidden" value ="{% url 'sell:filter_customer' %}" id="filter_customer">
@@ -44,6 +45,8 @@
 			</div>
 			<div id="sell_left">
 				<div style="padding-top:10px; margin:auto;width:100%; text-align: center;">
+					<input type="hidden" name="" value="{{ invoice_number }}" id="invoice_no">
+					<input type="hidden" value="{% url 'sell:save_order_product_list' %}" id="id_save_order_product_list">
 					<p><span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span>{{ invoice_number }}</span></p>
 				</div>
 				
@@ -53,11 +56,12 @@
 							<table style="width: 100%; border:0px solid gray;">
 								<thead>
 									<tr style="text-align: right;">
-										<th style="text-align: right;">Item</th>
-										<th style="text-align: right;">Quantity</th>
-										<th style="text-align: right;">Unit price</th>
-										<th style="text-align: right;">Subtotal</th>
-										<th style="text-align: right;">Remove</th>
+										<th style="">Item</th>
+										<th style="">Quantity</th>
+										<th style="">Unit price</th>
+										<th style="">Discount</th>
+										<th style="">Subtotal</th>
+										<th style="">Remove</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -74,7 +78,7 @@
 						<div class="col-md-6">
 							<p>Total: $<span id="total">00.00</span></p>
 							<p>Discount: <span id="discount">10%</span></p>
-							<p>Tax: <span id="tax">$90.00</span></p>
+							<!-- <p>Tax: <span id="tax">$90.00</span></p> -->
 						</div>
 
 						<div class="col-md-6">
@@ -85,9 +89,9 @@
 							
 							<button type="button" class="btn btn-danger action_button" onclick="cancelSelling()"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
 							
-							<button type="button" class="btn btn-info action_button"> <span class="glyphicon glyphicon-floppy-save"></span> Save</button>
+							<button type="button" class="btn btn-info action_button" onclick="saveSaleItem()"> <span class="glyphicon glyphicon-floppy-save"></span> Save</button>
 							
-							<button type="button" class="btn btn-info action_button"><span class="glyphicon glyphicon-flash"></span>Discount</button>
+							<!-- <button type="button" class="btn btn-info action_button"><span class="glyphicon glyphicon-flash"></span>Discount</button> -->
 							<!--  <button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-wrench"></span> Repair</button> -->
 							<button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-plus"></span> New</button>
 							
@@ -132,14 +136,19 @@
 								         
 									        <div class="caption" style="text-align: center !important;">
 									        	<h4>{{ i.name }}</h4>
-									        	{% if special_price > 0 %}
-									        		<h6>${{ i.special_price |floatformat:2 }}</h6>
+									        	{% if i.special_price > 0 %}
+									        		<h6>
+									        			<span style="text-decoration: line-through">${{ i.price |floatformat:2 }}</span>
+									        			<span style="color:red;">${{ i.special_price |floatformat:2 }} </span>
+									        		</h6>
 									        	{% else %}
-									        		<h6>${{ i.price |floatformat:2 }}</h6>
+									        		<h6 style="color:red;">${{ i.price |floatformat:2 }}</h6>
 									        	{% endif %}
 									        </div>
 								        </div>
 							      	</div> 
+
+
 								{% endfor %}
 							</div>
 						</div>
@@ -148,10 +157,12 @@
 			
 		</div>
 	</div>
+
+
 		
 	<div class="row" style="margin-top:20px; border:1px solid #f1f1f1; margin-bottom: 20px;">
 		<div class="col-md-12" id = "report_table">
-			<table class="table">
+			<table class="table" id="tb_report">
 				<thead>
 					<tr>
 						<th>No</th>
@@ -163,38 +174,24 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>INV001</td>
-						<td>Kimlong Ngin</td>
-						<td>Rithy</td>
-						<td>$100.00</td>
-						<td>2019/01/01</td>
-						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
-					</tr>
-					<tr>
-						<td>INV001</td>
-						<td>Kimlong Ngin</td>
-						<td>Rithy</td>
-						<td>$100.00</td>
-						<td>2019/01/01</td>
-						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
-					</tr>
-					<tr>
-						<td>INV001</td>
-						<td>Kimlong Ngin</td>
-						<td>Rithy</td>
-						<td>$100.00</td>
-						<td>2019/01/01</td>
-						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
-					</tr>
-					<tr>
-						<td>INV001</td>
-						<td>Kimlong Ngin</td>
-						<td>Rithy</td>
-						<td>$100.00</td>
-						<td>2019/01/01</td>
-						<td><a href="#">Update</a> | <a href="#">Delete</a> </td>
-					</tr>
+					{% if sale_today %}
+						{% for sale in sale_today %}
+							<tr>
+								<td>{{ sale.invoice_id }}</td>
+								<td>{{ sale.customer }}</td>
+								<td>{{ sale.user.first_name }} {{ sale.user.last_name }} </td>
+								<td>${{ sale.itotal }}</td>
+								<td>{{ sale.created_at }}</td>
+								<td><a href="#">Update</a> | <a href="#">Delete</a> | <a href="#">Payment</a> </td>
+
+							</tr>
+							
+						{% endfor %}
+
+					{% else %}
+						<tr style="width"><td colspan="6"><div style="width:100%; text-align: center;"><h3> No report today </h3></div></td></tr>
+					{% endif %}
+
 				</tbody>
 			</table>
 		</div>
@@ -256,9 +253,6 @@
 		search.addEventListener("input", getSearchResults);
 
 
-
-
-
 		function searchProduct(e)
 		{
 			var key_term = e.value;
@@ -298,9 +292,10 @@
 							var str_price = 0.0;
 
 							if(special_price > 0){ 
-								str_price = '<h6> $'+ special_price + '</h6>';
+						
+								str_price = '<h6> <span style="text-decoration: line-through"> $'+ price + '</span> <span style="color:red;"> $'+ special_price + '</span></h6>';
 							}else{ 
-								str_price = '<h6> $'+ price + '</h6>';
+								str_price = '<h6 style="color:red;"> $'+ price + '</h6>';
 							} 
 
 							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + show_name + '</h4>' + str_price +'</div></div></div>';
@@ -359,11 +354,13 @@
 							var str_price = 0.0;
 
 							if(special_price > 0){ 
-								str_price = '<h6> $'+ special_price + '</h6>';
+						
+								str_price = '<h6> <span style="text-decoration: line-through"> $'+ price + '</span> <span style="color:red;"> $'+ special_price + '</span></h6>';
 							}else{ 
-								str_price = '<h6> $'+ price + '</h6>';
+								str_price = '<h6 style="color:red;"> $'+ price + '</h6>';
 							} 
 
+							
 							str = str + '<div class="col-sm-6 col-md-4" onclick="moveObject(id ='+id+', name = '+ name +', price = '+price+',  special_price = '+special_price+')"> <div class="thumbnail">' + str_default_image + '<div class="caption" style="text-align: center !important;"><h4> ' + show_name + '</h4>' + str_price +'</div></div></div>';
 						}
 					}
@@ -376,6 +373,11 @@
 		    });
 		}
 	
+
+
+
+
+
 
 		var productObjects = []; // decalre array object
 		let idArray = []; // store id of produce 
@@ -423,21 +425,40 @@
 					console.log(false);
 					idArray.push(Number(id));
 					// add object to Json Array
-					productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1)});
+					productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1), "Discount": Number(0)});
 					found = false;
 				}
 			}else{
 				// add object to Json Array
 				idArray.push(Number(id));
-				productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1)});
+				productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1), "Discount": Number(0)});
 			}
 
+			var total = 0;
+			for (i = 0; i < productObjects.length; i++) {
+					// total = total + (productObjects[i].Unit * productObjects[i].Price);
+				if (Number(productObjects[i].Discount) > 0) { 
 
-			let total = 0;
-			for (var i = 0; i < productObjects.length; i++) {
-				total = total + (productObjects[i].Unit * productObjects[i].Price);
+					if (Number(productObjects[i].Special_price) > 0){
+						idiscount = ((productObjects[i].Unit * productObjects[i].Special_price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Special_price) - idiscount;
+						total = total + isub_total;
+					}else{
+						idiscount = ((productObjects[i].Unit * productObjects[i].Price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Price) - idiscount;
+						total = total + isub_total;
+					}
+				}else{
+					if (Number(productObjects[i].Special_price) > 0){
+						total = total + (productObjects[i].Unit * productObjects[i].Special_price);
+					}else{
+						total = total + (productObjects[i].Unit * productObjects[i].Price);
+					}
+					
+				}
 			}
 			document.getElementById("total").innerHTML = total;
+
 			
 
 			var MyTable = document.getElementById("t_product"); 
@@ -447,14 +468,21 @@
             var iname = NewRow.insertCell(0);
             var ibox = NewRow.insertCell(1);  
             var iunit_price = NewRow.insertCell(2);
-            var iprice = NewRow.insertCell(3); 
-            var idelete = NewRow.insertCell(4);
+            var idiscount = NewRow.insertCell(3);
+            var iprice = NewRow.insertCell(4); 
+            var idelete = NewRow.insertCell(5);
 
             iname.innerHTML = name; 
             ibox.innerHTML ='<input type="number" value=1  class="input_number" onclick="countNumber('+id+')" onkeyup="myCountNumber('+id+')" id = "unit'+id+'" > x';
-            iunit_price.innerHTML = '$<input type="text" name="" value= "'+ price +'"" style="border: none !important; width: 60px;" id="price_per_unit'+id+'">';
+            if(special_price > 0){
+            	iunit_price.innerHTML = '$<input type="text" name="" value= "'+ special_price +'"" style="border: none !important; width: 60px;" id="price_per_unit'+id+'">';
+            }else{
+            	iunit_price.innerHTML = '$<input type="text" name="" value= "'+ price +'"" style="border: none !important; width: 60px;" id="price_per_unit'+id+'">';
+        	}
+            idiscount.innerHTML ='(%)<input type="text" name="" value= "0" style=" width: 35px;" id="percent_discount'+id+'" onkeyup= checkDiscount('+id+')>';
             iprice.innerHTML = '$<input type="text" name="" iprice style="border: none !important; width: 60px;" id="sub_total'+id+'" value = "'+ price + '">';
             idelete.innerHTML ='<button type="button" value="Delete" onclick="deleteRow(this, '+id+')" style="background-color: none !important; border:none !important;"> <span class="glyphicon glyphicon-remove" style="color:red; font-size: 15pt;"></span></button>'
+
             unit = document.getElementById('unit'+id+'').value;
 			price_per_unit = document.getElementById('price_per_unit'+id+'').value;
 			document.getElementById('sub_total'+id+'').value = price_per_unit;
@@ -464,7 +492,6 @@
 				document.getElementById('sell_left').style = 'display:block;'
 			}else{
 				document.getElementById('sell_left').style = 'display:none;'
-				// document.getElementById('sell_left').innerHTML ="<h5> Welcome ! </h5>"
 			}
 		}
 
@@ -474,52 +501,177 @@
 		{
 			unit = document.getElementById('unit'+id).value;
 			price_per_unit = document.getElementById('price_per_unit'+id).value;
-			sub_total = unit * price_per_unit;
+			percent_discount = document.getElementById("percent_discount"+id).value;
+			
+			if (Number(percent_discount) > 0)  {
+				discount = ((unit * price_per_unit) * Number(percent_discount))/100;
+				sub_total = (unit * price_per_unit) - discount;
+			}else{
+				sub_total = unit * price_per_unit;
+			}
+
 			document.getElementById('sub_total'+id).value = sub_total;
 
-			for (var i = 0; i < productObjects.length; i++) {
+			//  Update productObject on Unit by id  
+			for (i = 0; i < productObjects.length; i++) {
 				if (Number(productObjects[i].Id) === Number(id)) {
 					productObjects[i].Unit = Number(unit);
+					
+					if (Number(percent_discount) > 0)
+					{
+						productObjects[i].Discount = Number(percent_discount);
+					} 
 					break;
 				}
 			} 
-			console.log(productObjects);
+			
 			// Total amount number
-			let total = 0;
-			for (var i = 0; i < productObjects.length; i++) {
-				total = total + (productObjects[i].Unit * productObjects[i].Price);
+			var total = 0;
+			for (i = 0; i < productObjects.length; i++) {
+				if (Number(productObjects[i].Discount) > 0) { 
+
+					if (Number(productObjects[i].Special_price) > 0){
+						idiscount = ((productObjects[i].Unit * productObjects[i].Special_price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Special_price) - idiscount;
+						total = total + isub_total;
+					}else{
+						idiscount = ((productObjects[i].Unit * productObjects[i].Price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Price) - idiscount;
+						total = total + isub_total;
+					}
+				}else{
+					if (Number(productObjects[i].Special_price) > 0){
+						total = total + (productObjects[i].Unit * productObjects[i].Special_price);
+					}else{
+						total = total + (productObjects[i].Unit * productObjects[i].Price);
+					}
+					
+				}
 			}
 			document.getElementById("total").innerHTML = total;
 		}
+
+		function checkDiscount(id)
+		{
+			unit = document.getElementById('unit'+id).value;
+			price_per_unit = document.getElementById('price_per_unit'+id).value;
+			percent_discount = document.getElementById("percent_discount"+id).value;
+			
+			if (Number(percent_discount) > 0)  {
+				discount = ((unit * price_per_unit) * Number(percent_discount))/100;
+				sub_total = (unit * price_per_unit) - discount;
+			}else{
+				sub_total = unit * price_per_unit;
+			}
+
+			document.getElementById('sub_total'+id).value = sub_total;
+
+			//  Update productObject on Unit by id  
+			for (i = 0; i < productObjects.length; i++) {
+				if (Number(productObjects[i].Id) === Number(id)) {
+					productObjects[i].Unit = Number(unit);
+					
+					if (Number(percent_discount) > 0)
+					{
+						productObjects[i].Discount = Number(percent_discount);
+					} 
+					break;
+				}
+			} 
+			
+			// Total amount number
+			var total = 0;
+			for (i = 0; i < productObjects.length; i++) {
+				if (Number(productObjects[i].Discount) > 0) { 
+
+					if (Number(productObjects[i].Special_price) > 0){
+						idiscount = ((productObjects[i].Unit * productObjects[i].Special_price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Special_price) - idiscount;
+						total = total + isub_total;
+					}else{
+						idiscount = ((productObjects[i].Unit * productObjects[i].Price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Price) - idiscount;
+						total = total + isub_total;
+					}
+				}else{
+					if (Number(productObjects[i].Special_price) > 0){
+						total = total + (productObjects[i].Unit * productObjects[i].Special_price);
+					}else{
+						total = total + (productObjects[i].Unit * productObjects[i].Price);
+					}
+					
+				}
+			}
+			document.getElementById("total").innerHTML = total;
+		}
+
+
 
 		// Keyup for increasing and descreasing number in box
 		function myCountNumber(id)
 		{
 			unit = document.getElementById('unit'+id).value;
+			percent_discount = document.getElementById("percent_discount"+id).value;
+			
 			if (unit <=0 )
 			{
 				document.getElementById('sub_total'+id).value = 0;
 			}else{
 				price_per_unit = document.getElementById('price_per_unit'+id).value;
-				sub_total = unit * price_per_unit;
+				// sub_total = unit * price_per_unit;
+				if ( Number(percent_discount) > 0){
+					discount = ((unit * price_per_unit) * Number(percent_discount))/100;
+					sub_total = (unit * price_per_unit) - discount;
+				}else{
+					sub_total = unit * price_per_unit;
+				}
 				document.getElementById('sub_total'+id).value = sub_total;
 			}
 
-			for (var i = 0; i < productObjects.length; i++) {
+
+			for (i = 0; i < productObjects.length; i++) {
 				if (Number(productObjects[i].Id) === Number(id)) {
 					productObjects[i].Unit = Number(unit);
+					if (Number(percent_discount) > 0)
+					{
+						productObjects[i].Discount = Number(percent_discount);
+					} 
 					break;
 				}
 			} 
-			console.log(productObjects);
-
+			// console.log(productObjects);
 			// Total amount number
 
 			let total = 0;
-			for (var i = 0; i < productObjects.length; i++) {
-				total = total + (productObjects[i].Unit * productObjects[i].Price);
+			for (i = 0; i < productObjects.length; i++) {
+					// total = total + (productObjects[i].Unit * productObjects[i].Price);
+				if (Number(productObjects[i].Discount) > 0) { 
+
+					if (Number(productObjects[i].Special_price) > 0){
+						idiscount = ((productObjects[i].Unit * productObjects[i].Special_price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Special_price) - idiscount;
+						total = total + isub_total;
+					}else{
+						idiscount = ((productObjects[i].Unit * productObjects[i].Price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Price) - idiscount;
+						total = total + isub_total;
+					}
+				}else{
+					if (Number(productObjects[i].Special_price) > 0){
+						total = total + (productObjects[i].Unit * productObjects[i].Special_price);
+					}else{
+						total = total + (productObjects[i].Unit * productObjects[i].Price);
+					}
+					
+				}
 			}
 			document.getElementById("total").innerHTML = total;
+
+			// let total = 0;
+			// for (var i = 0; i < productObjects.length; i++) {
+			// 	total = total + (productObjects[i].Unit * productObjects[i].Price);
+			// }
+			// document.getElementById("total").innerHTML = total;
 		}
 
 
@@ -540,7 +692,33 @@
 			const iindex = productObjects.findIndex(x => Number(x.Id) === id);
 			console.log(iindex);
 			if (iindex !== undefined) productObjects.splice(iindex, 1);
+
 			console.log("After removal:", productObjects);
+
+
+			let total = 0;
+			for (var i = 0; i < productObjects.length; i++) {
+					// total = total + (productObjects[i].Unit * productObjects[i].Price);
+				if (Number(productObjects[i].Discount) > 0) { 
+
+					if (Number(productObjects[i].Special_price) > 0){
+						idiscount = ((productObjects[i].Unit * productObjects[i].Special_price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Special_price) - idiscount;
+						total = total + isub_total;
+					}else{
+						idiscount = ((productObjects[i].Unit * productObjects[i].Price) * Number(productObjects[i].Discount))/100;
+						isub_total = (productObjects[i].Unit * productObjects[i].Price) - idiscount;
+						total = total + isub_total;
+					}
+				}else{
+					if (Number(productObjects[i].Special_price) > 0){
+						total = total + (productObjects[i].Unit * productObjects[i].Special_price);
+					}else{
+						total = total + (productObjects[i].Unit * productObjects[i].Price);
+					}	
+				}
+			}
+			document.getElementById("total").innerHTML = total;
 			
 			// show and hide order box 'sell_left'
 			if (idArray.length > 0)
@@ -549,6 +727,7 @@
 			}else{
 				document.getElementById('sell_left').style = 'display:none;'
 			}
+
 		}
 	
 		//  Remove all row from table 
@@ -583,10 +762,60 @@
 		});
 
 
+		// Save products booking in list
+		function saveSaleItem()
+		{
+			// client_id = document.getElementById().value;
+			invoice_no = document.getElementById("invoice_no").value;
+			urli = document.getElementById("id_save_order_product_list").value;
+			ck_true_fail = document.getElementById("results").options[0];
+			var client_key = "";
+			if (ck_true_fail)
+			{
+				var e = document.getElementById("results");	
+				client_key = e.options[e.selectedIndex].value;
+			}else{
+				alert("Please select client in box first.")
+				return;
+			}
+
+			$.ajax({
+				headers: { "X-CSRFToken": getCookie("csrftoken") },
+		    	url: String(urli),
+		    	type: "GET",
+		    	contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                cache: false,
+		    	data: {
+		    		"invoice_no": invoice_no,
+		    		"client_key": client_key,
+		    		"sale_item": JSON.stringify(productObjects),
+		    		csrfmiddlewaretoken: '{{ csrf_token }}'
+		    	},
+		    	success: function (data) {
+		    		alert("success saved");
+		    		console.log(data);
+		    		str ='';
+
+		    		str_head = '<table class="table" id="tb_report"><thead><tr><th>No</th><th>Client</th><th>Seller</th><th>Total</th><th>Date</th><th>Action</th></tr></thead>';
+		    		str_body = '<tbody>';
+		    		str = str +''+ str_head +''+ str_body
+					for(i=0; i < data.result.length; i++){
+						str = str +' '+'<tr> <td>'+ data.result[i].invoice_id +'</td> <td> '+ data.result[i].customer +'</td> <td> '+ data.result[i].user +' </td> <td> $'+data.result[i].itotal+' </td> <td> '+ data.result[i].created_at +' </td> <td><a href="#">Update</a> | <a href="#">Delete</a> | Update</a> | <a href="#">Payment</a> </td></tr>'
+					}
+						
+					str = str +' '+	'</tbody></table></div>';
+					document.getElementById('report_table').innerHTML = str;
+				
+		    	}, error: function(data)
+		    	{
+		    		alert("Save error, please check information.");
+		    		console.log(data);
+		    	}
+		    });
 		
-		
-		
-		
+		}
 		
 		
 	</script>

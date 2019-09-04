@@ -70,12 +70,15 @@ class SaleInvoice(models.Model):
 		ordering = ["-created_at", "-updated_at"]
 		
 STATUS_CHOICES = (
-	('NO', 'No'),
-    ('FULL', 'Full'),
+	('', ''),
+	('FULL', 'Full'),
     ('OWE', 'Owe'),
 )
 class Payment(models.Model):
 	invoice = models.ForeignKey(SaleInvoice, related_name='payment_invoice', on_delete = models.CASCADE)
+	tax = models.FloatField(default=0.0, blank=True)
+	total_amount = models.FloatField(default=0.0)
+	discount = models.IntegerField(default=0, blank=True)
 	pay_amount = models.FloatField(default=0.0)
 	remain = models.FloatField(default=0.0)
 	pay_status = models.CharField(max_length=10, choices=STATUS_CHOICES)
@@ -99,18 +102,18 @@ class SaleInvoiceForm(ModelForm):
 	class Meta:
 		fields = ['user']
 		# model = SaleInvoice
-
+   
 
 class SaleInvoiceItem(models.Model):
 	invoice = models.ForeignKey(SaleInvoice, related_name='sale_invoice', on_delete=models.CASCADE)
 	product = models.ForeignKey(Product, related_name='sale_invoice_item_product', on_delete=models.CASCADE)
-	unit= models.IntegerField(default=0)
-	unit_price = models.FloatField(default=0.0, blank=True)
+	unit= models.IntegerField(default=0) #Quantity in one product
+	unit_price = models.FloatField(default=0.0, blank=True) # Price in per_unit
+	discount = models.IntegerField(default=0, blank=True)
 	description= models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
 	is_status = models.BooleanField(default=True)
-	
 	
 	def __str__ (self):
 		return str(self.invoice)

@@ -39,8 +39,8 @@ admin.site.register(Customer, CustomerAdmin)
 
 
 class SaleInvoiceAdmin(admin.ModelAdmin):
-	list_display = ('invoice_number', 'user', 'customer', 'updated_at')
-	search_fields = ('invoice_number', 'user__first_name', 'customer__full_name', 'updated_at')
+	list_display = ('invoice_number', 'user', 'customer','created_at', 'updated_at')
+	search_fields = ('invoice_number', 'user__first_name', 'customer__full_name', 'created_at', 'updated_at')
 	# readonly_fields = ('user')
 
 
@@ -154,8 +154,6 @@ class SaleInvoiceItemAdmin(admin.ModelAdmin):
 	delete_selected.allowed_permissions = ('delete',)
 
 	delete_selected.short_description = "Delete all selected objects"
-
-
 
 
 	def save_model(self, request, obj, form, change):

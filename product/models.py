@@ -13,7 +13,6 @@ from location.models import Location
 
 # Create your models here.
 
-
 def upload_location(instance, filename):
 		filebase, extension = filename.split(".")
 		return "%s/%s.%s" %(instance.id, instance.id, extension)
@@ -38,7 +37,6 @@ class ProductCategory(models.Model):
     def __str__ (self):
     	# return self.name + ' ' + str(self.created_at)
     	return self.name 
-
     class  Meta:
     	ordering = ['-created_at']
 
@@ -69,7 +67,6 @@ class ProductType(models.Model):
 		
 		def __unicode__(self):
 			return str(self.title)
-			
 
 class Product(models.Model):
 	product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
