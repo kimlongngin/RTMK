@@ -74,7 +74,16 @@ class SaleView(SuccessMessageMixin, generic.ListView):
 							sub_total = j.unit * j.unit_price 
 							total = total + sub_total
 
-				all_sales.append({"itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":i.user, "customer":i.customer, "created_at":i.created_at})	
+
+				#  GET data from Payment table
+				pay_amount = 0
+				receive_amount = 0
+				if i.payment_invoice.all():
+					for p in i.payment_invoice.all():
+						pay_amount = p.pay_amount
+						receive_amount = p.receive_amount
+				# all_sales.append({"pay_amount":pay_amount, "receive_amount":receive_amount, "itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":full_name, "customer":customer_name, "created_at": date_time})	
+				all_sales.append({"pay_amount":pay_amount, "receive_amount":receive_amount, "itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":i.user, "customer":i.customer, "created_at":i.created_at})	
 				
 		return render(request, self.template_name, {'sale_today':all_sales, 'all_customers':customer, 'all_categories': data, 'all_products':products, 'invoice_number': invoice_number, 'user':user}) 
 
@@ -106,6 +115,128 @@ def filter_customer(request):
 	else:
 		return HttpResponse("<h1> Welcome !!! </h1>")
 
+def make_invoice_payment(request):
+
+	if request.is_ajax():
+		invoice_no = request.GET['myinvoice_no']
+		client_key = request.GET['client_key']
+		user = request.user
+		sale_product = request.GET['sale_item']
+		data_product = json.loads(sale_product) # Extract array objects 
+		
+		# Check customer
+		try:
+			s_customer = Customer.objects.get(pk = client_key)
+		except Customer.DoesNotExist:
+			# mydata['data'] = 'Customer does not exist!'
+			return HttpResponse({'data':'Customer does not exist!'}, content_type="application/json")
+		
+		# Check exist of sale invoice items
+		try:
+			s_invoice = SaleInvoice.objects.get(invoice_number=invoice_no, is_status=True)
+		except SaleInvoice.DoesNotExist:
+			Binvoice = SaleInvoice(invoice_number = invoice_no, user=user, customer = s_customer, description="Auto save from front end.")
+			Binvoice.save()
+		n_invoice = SaleInvoice.objects.get(invoice_number=invoice_no, is_status=True)
+
+		if n_invoice:
+			
+			# Incase the same Invoice_ID multiople save, so First delete it and then save the last one.
+			SaleInvoiceItem.objects.filter(invoice=n_invoice, is_status=True).delete()
+			for i in data_product:
+				p_id = i["Id"]
+				try:
+					s_product = Product.objects.get(id=p_id, is_status=True)
+				except Product.DoesNotExist:
+					SaleInvoice.objects.filter(invoice_number=invoice_no).delete()
+					return HttpResponse("Product number does not exist")
+
+				p_unit = i["Unit"]
+				p_price = i["Price"]
+				p_special_price = i["Special_price"]
+				p_discount = i["Discount"]
+			
+				if s_product:
+					if float(p_special_price) > 0:
+						b_sale_item = SaleInvoiceItem(invoice=n_invoice, product=s_product, unit=p_unit, unit_price = p_special_price, discount=p_discount, description="Auto save item.")
+						b_sale_item.save()
+					else:
+						b_sale_item = SaleInvoiceItem(invoice=n_invoice, product=s_product, unit=p_unit, unit_price = p_price, discount=p_discount, description="Auto save item.")
+						b_sale_item.save() 
+
+			
+			sc = SaleInvoiceItem.objects.filter(invoice=n_invoice, is_status=True)
+			
+
+			if sc.count() > 0:
+				try:
+					Payment.objects.filter(invoice=n_invoice, is_status=True).delete()
+				except Payment.DoesNotExist:
+					print("Error delete payment")
+
+				total_amount = request.GET['total_amount']
+				discount = request.GET['discount']
+				pay_amount = request.GET['pay_amount']
+				receive_amount = request.GET['receive_amount']
+				remain = request.GET['remain']
+				if int(remain)>0:
+					b_payment = Payment(invoice=n_invoice, total_amount = total_amount, discount = discount, pay_amount = pay_amount, receive_amount = receive_amount, remain =remain, pay_status = 'OWE')
+					b_payment.save()
+				else:
+					b_payment = Payment(invoice=n_invoice, total_amount = total_amount, discount = discount, pay_amount = pay_amount, receive_amount = receive_amount, remain =remain,  pay_status = 'FULL')
+					b_payment.save()
+			else:
+				SaleInvoiceItem.objects.filter(invoice=n_invoice, is_status=True).delete()
+				return HttpResponse("Please save invoice item first.")
+
+
+		#  Select all sale today to display on the sale page.
+		today = date.today()
+		today_sale = SaleInvoice.objects.filter(is_status=True, created_at__year=today.year, created_at__month=today.month, created_at__day=today.day)
+		
+		all_sales = []
+		total = 0
+		if today_sale:
+			for i in today_sale:
+				
+				if i.sale_invoice.all():
+					for j in i.sale_invoice.all():
+						if int(j.discount > 0): 
+							sub_total = j.unit * j.unit_price  
+							discount = (sub_total * j.discount)/100 
+							itotal = sub_total - discount 
+							total = total + itotal 
+						else: 
+							sub_total = j.unit * j.unit_price 
+							total = total + sub_total
+				
+
+
+				full_name = i.user.first_name + '' + i.user.last_name
+				customer_name = i.customer.full_name
+				date_time = str(i.created_at)
+
+				#  GET data from Payment table
+				pay_amount = 0
+				receive_amount = 0
+				if i.payment_invoice.all():
+					for p in i.payment_invoice.all():
+						pay_amount = p.pay_amount
+						receive_amount = p.receive_amount
+
+
+				all_sales.append({"pay_amount":pay_amount, "receive_amount":receive_amount, "itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":full_name, "customer":customer_name, "created_at": date_time})	
+			
+
+
+		return HttpResponse(json.dumps({'result': all_sales}), content_type="application/json")
+		
+	else:
+		return HttpResponse(json.dumps({'result': 'Payment unsuccess, please recheck your list.'}), content_type="application/json")
+
+
+
+
 @csrf_protect
 def save_order_product_list(request):
 
@@ -118,14 +249,14 @@ def save_order_product_list(request):
 		data_product = json.loads(sale_product)
 		
 		
-		# productObjects.push({"Id":id, "Name":name, "Price": price, "Special_price":special_price, "Unit": Number(1), "Discount": 
-		
+		# Check customer
 		try:
 			s_customer = Customer.objects.get(pk = client_key)
 		except Customer.DoesNotExist:
 			# mydata['data'] = 'Customer does not exist!'
 			return HttpResponse({'data':'Customer does not exist!'}, content_type="application/json")
 		
+		# Check exist of sale invoice items
 		try:
 			s_invoice = SaleInvoice.objects.get(invoice_number=invoice_no, is_status=True)
 		except SaleInvoice.DoesNotExist:
@@ -134,6 +265,10 @@ def save_order_product_list(request):
 
 		n_invoice = SaleInvoice.objects.get(invoice_number=invoice_no, is_status=True)
 		if n_invoice:
+
+			# Incase the same Invoice_ID multiople save, so First delete it and then save the last one.
+			SaleInvoiceItem.objects.filter(invoice=n_invoice, is_status=True).delete()
+
 			for i in data_product:
 				p_id = i["Id"]
 				try:
@@ -147,6 +282,7 @@ def save_order_product_list(request):
 				p_special_price = i["Special_price"]
 				p_discount = i["Discount"]
 				if s_product:
+					
 					if float(p_special_price) > 0:
 						b_sale_item = SaleInvoiceItem(invoice=n_invoice, product=s_product, unit=p_unit, unit_price = p_special_price, discount=p_discount, description="Auto save item.")
 						b_sale_item.save()
@@ -170,17 +306,53 @@ def save_order_product_list(request):
 						else:
 							sub_total = j.unit * j.unit_price 
 							total = total + sub_total
+
+
+
 				full_name = i.user.first_name + '' + i.user.last_name
 				customer_name = i.customer.full_name
 				date_time = str(i.created_at)
-				all_sales.append({"itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":full_name, "customer":customer_name, "created_at": date_time})	
-		print(all_sales)
+
+				#  GET data from Payment table
+				pay_amount = 0
+				receive_amount = 0
+				if i.payment_invoice.all():
+					for p in i.payment_invoice.all():
+						pay_amount = p.pay_amount
+						receive_amount = p.receive_amount
+				all_sales.append({"pay_amount":pay_amount, "receive_amount":receive_amount, "itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":full_name, "customer":customer_name, "created_at": date_time})	
+
+				# all_sales.append({"itotal":total, "id":i.id, "invoice_id":i.invoice_number, "user":full_name, "customer":customer_name, "created_at": date_time})			
 
 		# data = serializers.serialize('json', {'result': all_sales})
 		# print(data)
-
 		return HttpResponse(json.dumps({'result': all_sales}), content_type="application/json")
 		
 	else:
 		return HttpResponse("<h1> Welcome !!! </h1>")
+
+
+
+def check_invoice_product_list(request):
+	myinvoice_no = ''
+	if request.is_ajax():
+		invoice_no = request.GET['invoice_no']
+		try:
+			s_invoice = SaleInvoice.objects.get(invoice_number=invoice_no, is_status=True)
+			myinvoice_no = increment_invoice_number()
+		except SaleInvoice.DoesNotExist:
+			return HttpResponse(json.dumps({'result': 'please save invoice first.'}), content_type="application/json")  
+		
+		return HttpResponse(json.dumps({'result': 'Invoice already saved to list.', 'invoice_no':myinvoice_no}), content_type="application/json")
+	else:
+		return HttpResponse('<h3> Hello world! </h3>')
+
+
+
+
+
+
+
+
+
 

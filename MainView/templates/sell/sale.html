@@ -19,7 +19,6 @@
 					<!-- <br> -->
 					<!-- <input type="text" id="search" name="search"> -->
 					
-
 					<div class="form-group has-success has-feedback" id="select_result">
 					  <label class="control-label sr-only" for="inputGroupSuccess4">Input group with success</label>
 					  <div class="input-group">
@@ -47,7 +46,7 @@
 				<div style="padding-top:10px; margin:auto;width:100%; text-align: center;">
 					<input type="hidden" name="" value="{{ invoice_number }}" id="invoice_no">
 					<input type="hidden" value="{% url 'sell:save_order_product_list' %}" id="id_save_order_product_list">
-					<p><span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span>{{ invoice_number }}</span></p>
+					<p><span style="font-size: 14pt; font-weight: bold;">Invoice:</span> <span id = "show_invoice_no">{{ invoice_number }}</span></p>
 				</div>
 				
 				<form action="" method="POST">
@@ -56,9 +55,9 @@
 							<table style="width: 100%; border:0px solid gray;">
 								<thead>
 									<tr style="text-align: right;">
-										<th style="">Item</th>
-										<th style="">Quantity</th>
-										<th style="">Unit price</th>
+										<th style="">Items</th>
+										<th style="">Qty</th>
+										<th style="">Price</th>
 										<th style="">Discount</th>
 										<th style="">Subtotal</th>
 										<th style="">Remove</th>
@@ -74,6 +73,93 @@
 						</div>
 					</div>
 
+
+					<!-- Modal -->
+					<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					  <div class="modal-dialog" role="document" style="width: 85% !important; border: none !important; border-radius: 0px !important; margin-left: auto; margin-right: auto;">
+					    <div class="modal-content" style="border: none !important; border-radius: 0px !important;">
+					      <div class="modal-header">
+					        <h5 class="modal-title" id="exampleModalLabel"> PAYMENT FORM </h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+					      </div>
+					      <div class="modal-body">
+					      	
+
+
+					        <div class="row">
+					        	<div class="col-md-6"​ id = "payment_block">
+					        		<table class="table">
+					        			<thead>
+					        				<tr style="text-align: right;">
+												<th style="">Items</th>
+												<th style="">Qty</th>
+												<th style="">Price</th>
+												<th style="">Discount</th>
+												<th style="">Subtotal</th>
+											</tr>
+					        			</thead>
+					        			<tbody>
+					        				<tr>
+					        					
+					        				</tr>
+					        			</tbody>
+					        		</table>
+					        	</div>
+					        	
+					        	<div class="col-md-6">
+					        		<div class="form-group has-success">
+										<label class="control-label" for="inputSuccess1">Total Amount($)</label>
+										<input type="text" class="form-control" id="total_payment" aria-describedby="helpBlock2" disabled>
+										<span id="helpBlock2" class="help-block has-error">Total amount as dollar($).</span>
+									</div>
+									
+									<div class="form-group has-warning" style="">
+									  <label class="control-label" for="inputSuccess1">Discount(%)</label>
+									  <input type="number" class="form-control" id="discount_payment" onclick="myDiscountPayment()" onkeyup="discountPayment()" value=0>
+									  <span id="helpBlock2" class="help-block">Discount as percentage(%).</span>
+									</div>
+
+									<div class="form-group has-success">
+									  <label class="control-label" for="inputSuccess1">Pay amount ($)</label>
+									  <input type="text" class="form-control" id="amount_payment" disabled>
+									</div>
+									<div class="form-group has-warning">
+										<label class="control-label" for="inputSuccess1">Receive amount ($)</label>
+										<input type="number" class="form-control" id="receive_amount_payment" onclick="myReceivePayment()" onkeyup="receivePayment()" value=0>
+									</div>
+									<div class="form-group has-success">
+									  <label class="control-label" for="inputSuccess1">Exchange ($)</label>
+									  <input type="text" class="form-control" id="exchange_payment" disabled>
+									</div>
+									<div class="form-group has-success">
+									  <label class="control-label" for="inputSuccess1">Remaining ($)</label>
+									  <input type="text" class="form-control" id="remaining_payment" value="" placeholder="$00.00" disabled>
+									</div>
+									
+					        	</div>
+					        </div>
+
+					      </div>
+
+					      <div class="modal-footer">
+					      	<div>
+					      		<div>
+							      	{% if user.is_authenticated %}
+							        	<h5 style="color: #ce4844;"> Controller: {{ user.first_name }} {{ user.last_name }} </h5>
+							        {% endif %}
+						    	</div>
+						    	<div><button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					        <button type="button" class="btn btn-primary" onclick="makePayment('{{ invoice_number }}')"><span class="glyphicon glyphicon-usd"></span> Pay </a></div>
+					      	</div>
+					        
+					      </div>
+					    </div>
+					  </div>
+					</div>
+
+
 					<div class="row sell_left_action">
 						<div class="col-md-6">
 							<p>Total: $<span id="total">00.00</span></p>
@@ -82,7 +168,10 @@
 						</div>
 
 						<div class="col-md-6">
-							 <button type="submit" class="btn btn-success pay_button"><span class="glyphicon glyphicon-usd"></span> Payment </button>
+								
+								</button>
+							 <a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal" class="btn btn-success pay_button" on style="padding-top: 10px;">
+							 	<span class="glyphicon glyphicon-usd"></span> Go to pay </a>
 						</div>
 
 						<div class="col-md-12" style="text-align: right;">
@@ -93,7 +182,7 @@
 							
 							<!-- <button type="button" class="btn btn-info action_button"><span class="glyphicon glyphicon-flash"></span>Discount</button> -->
 							<!--  <button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-wrench"></span> Repair</button> -->
-							<button type="button" class="btn btn-info action_button" onclick="newOrder()"><span class="glyphicon glyphicon-plus"></span> New</button>
+							<button type="button" class="btn btn-info action_button" onclick="newOrder('{{ invoice_number }}')"><span class="glyphicon glyphicon-plus"></span> New</button>
 							
 						</div>
 					</div>
@@ -157,8 +246,6 @@
 			
 		</div>
 	</div>
-
-
 		
 	<div class="row" style="margin-top:20px; border:1px solid #f1f1f1; margin-bottom: 20px;">
 		<div class="col-md-12" id = "report_table">
@@ -169,6 +256,7 @@
 						<th>Client</th>
 						<th>Seller</th>
 						<th>Total</th>
+						<th>Receive</th>
 						<th>Date</th>
 						<th>Action</th>
 					</tr>
@@ -180,7 +268,17 @@
 								<td>{{ sale.invoice_id }}</td>
 								<td>{{ sale.customer }}</td>
 								<td>{{ sale.user.first_name }} {{ sale.user.last_name }} </td>
-								<td>${{ sale.itotal }}</td>
+								<td>
+									{% if sale.pay_amount > 0 %}
+										${{ sale.pay_amount }}
+									{% else %}
+										${{ sale.itotal }}
+									{% endif %}
+
+								</td>
+								<td>
+									${{ sale.receive_amount }}
+								</td>
 								<td>{{ sale.created_at }}</td>
 								<td><a href="#">Update</a> | <a href="#">Delete</a> | <a href="#">Payment</a> </td>
 
@@ -458,7 +556,9 @@
 				}
 			}
 			document.getElementById("total").innerHTML = total;
-
+			document.getElementById("total_payment").value = total;
+			document.getElementById("amount_payment").value = total;
+			document.getElementById("remaining_payment").value = total;
 			
 
 			var MyTable = document.getElementById("t_product"); 
@@ -482,7 +582,6 @@
             idiscount.innerHTML ='(%)<input type="text" name="" value= "0" style=" width: 35px;" id="percent_discount'+id+'" onkeyup= checkDiscount('+id+')>';
             iprice.innerHTML = '$<input type="text" name="" iprice style="border: none !important; width: 60px;" id="sub_total'+id+'" value = "'+ price + '">';
             idelete.innerHTML ='<button type="button" value="Delete" onclick="deleteRow(this, '+id+')" style="background-color: none !important; border:none !important;"> <span class="glyphicon glyphicon-remove" style="color:red; font-size: 15pt;"></span></button>'
-
             unit = document.getElementById('unit'+id+'').value;
 			price_per_unit = document.getElementById('price_per_unit'+id+'').value;
 			document.getElementById('sub_total'+id+'').value = price_per_unit;
@@ -493,6 +592,7 @@
 			}else{
 				document.getElementById('sell_left').style = 'display:none;'
 			}
+
 		}
 
 
@@ -549,7 +649,14 @@
 				}
 			}
 			document.getElementById("total").innerHTML = total;
+			document.getElementById("total_payment").value = total;
+			document.getElementById("amount_payment").value = total;
+			document.getElementById("remaining_payment").value = total;
 		}
+
+		
+
+
 
 		function checkDiscount(id)
 		{
@@ -603,6 +710,9 @@
 				}
 			}
 			document.getElementById("total").innerHTML = total;
+			document.getElementById("total_payment").value = total;
+			document.getElementById("amount_payment").value = total;
+			document.getElementById("remaining_payment").value = total;
 		}
 
 
@@ -666,6 +776,9 @@
 				}
 			}
 			document.getElementById("total").innerHTML = total;
+			document.getElementById("total_payment").value = total;
+			document.getElementById("amount_payment").value = total;
+			document.getElementById("remaining_payment").value = total;
 
 			// let total = 0;
 			// for (var i = 0; i < productObjects.length; i++) {
@@ -719,6 +832,9 @@
 				}
 			}
 			document.getElementById("total").innerHTML = total;
+			document.getElementById("total_payment").value = total;
+			document.getElementById("amount_payment").value = total;
+			document.getElementById("remaining_payment").value = total;
 			
 			// show and hide order box 'sell_left'
 			if (idArray.length > 0)
@@ -744,11 +860,48 @@
 		}
 
 		// Start new order if the previous order not yet saved, so it will ask to save first if not then start a new order
-		function newOrder()
+		function newOrder(inv_no)
 		{
+			invoice_no = document.getElementById("invoice_no").value;
 			if (idArray.length > 0)
 			{
-				alert('Please save existing order first!');
+	
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+			    	url: '/sell/check_invoice_product_list',
+			    	type: "GET",
+			    	contentType: "application/json; charset=utf-8",
+	                dataType: "json",
+	                async: true,
+	                cache: false,
+			    	data: {
+			    		"invoice_no": invoice_no,
+			    		csrfmiddlewaretoken: '{{ csrf_token }}'
+			    	},
+			    	success: function (data) {
+			    		console.log(data);
+			    		if (data.invoice_no)
+			    		{
+			    			idArray = []; // reset array
+							productObjects = []; // reset json array
+							$("#t_product tr").remove(); 
+							document.getElementById('sell_left').style = 'display:none;'
+
+			    			document.getElementById("show_invoice_no").innerHTML = data.invoice_no;
+			    			document.getElementById("invoice_no").value = data.invoice_no;
+
+			    			
+			    		}else{
+			    			alert('Please save all products ordered first.');
+			    		}
+			    		// get new invoice ID 
+
+
+			    	}, error: function(error) {
+			    		console.log('error renew order.');
+			    	}
+			    });
+				
 			}else{
 				idArray = []; // reset array
 				productObjects = []; // reset json array
@@ -762,61 +915,304 @@
 		});
 
 
+
+
+
+
+
 		// Save products booking in list
 		function saveSaleItem()
 		{
-			// client_id = document.getElementById().value;
-			invoice_no = document.getElementById("invoice_no").value;
-			urli = document.getElementById("id_save_order_product_list").value;
-			ck_true_fail = document.getElementById("results").options[0];
-			var client_key = "";
-			if (ck_true_fail)
-			{
-				var e = document.getElementById("results");	
-				client_key = e.options[e.selectedIndex].value;
-			}else{
-				alert("Please select client in box first.")
-				return;
+
+
+			var confirm = window.confirm("Do you want to save this invoice?")
+			if (confirm) {
+			    //some code
+			
+				// client_id = document.getElementById().value;
+				invoice_no = document.getElementById("invoice_no").value;
+				urli = document.getElementById("id_save_order_product_list").value;
+				ck_true_fail = document.getElementById("results").options[0];
+				var client_key = "";
+				if (ck_true_fail)
+				{
+					var e = document.getElementById("results");	
+					client_key = e.options[e.selectedIndex].value;
+				}else{
+					alert("Please select client in box first.")
+					return;
+				}
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+			    	url: String(urli),
+			    	type: "GET",
+			    	contentType: "application/json; charset=utf-8",
+	                dataType: "json",
+	                async: true,
+	                cache: false,
+			    	data: {
+			    		"invoice_no": invoice_no,
+			    		"client_key": client_key,
+			    		"sale_item": JSON.stringify(productObjects),
+			    		csrfmiddlewaretoken: '{{ csrf_token }}'
+			    	},
+			    	success: function (data) {
+			   //  		alert("success saved");
+			   //  		console.log(data);
+			   //  		str ='';
+
+			   //  		str_head = '<table class="table" id="tb_report"><thead><tr><th>No</th><th>Client</th><th>Seller</th><th>Total</th><th>Date</th><th>Action</th></tr></thead>';
+			   //  		str_body = '<tbody>';
+			   //  		str = str +''+ str_head +''+ str_body
+						// for(i=0; i < data.result.length; i++){
+						// 	str = str +' '+'<tr> <td>'+ data.result[i].invoice_id +'</td> <td> '+ data.result[i].customer +'</td> <td> '+ data.result[i].user +' </td> <td> $'+data.result[i].itotal+' </td> <td> '+ data.result[i].created_at +' </td> <td><a href="#">Update</a> | <a href="#">Delete</a> | <a href="#">Payment</a> </td></tr>'
+						// }
+							
+						// str = str +' '+	'</tbody></table></div>';
+						// document.getElementById('report_table').innerHTML = str;
+
+
+						alert("success saved");
+			    		console.log(data);
+			    		var mypayment = 0;
+			    		str ='';
+
+			    		str_head = '<table class="table" id="tb_report"><thead><tr><th>No</th><th>Client</th><th>Seller</th><th>Total</th><th>Date</th><th>Action</th></tr></thead>';
+			    		str_body = '<tbody>';
+			    		str = str +''+ str_head +''+ str_body
+						for(i=0; i < data.result.length; i++){
+							if (data.result[i].pay_amount > 0)
+							{
+								mypayment = data.result[i].pay_amount
+							} else{
+								mypayment = data.result[i].itotal
+							}
+							str = str +' '+'<tr> <td>'+ data.result[i].invoice_id +'</td> <td> '+ data.result[i].customer +'</td> <td> '+ data.result[i].user +' </td> <td> $'+mypayment+' </td><td> $'+data.result[i].receive_amount +'</td><td> '+ data.result[i].created_at +' </td> <td><a href="#">Update</a> | <a href="#">Delete</a> | <a href="#">Payment</a> </td></tr>'
+						}
+							
+						str = str +' '+	'</tbody></table></div>';
+						document.getElementById('report_table').innerHTML = str;
+
+					
+			    	}, error: function(data)
+			    	{
+			    		alert("Save error, please check information.");
+			    		console.log(data);
+			    	}
+			    });
+		    }else {
+			    console.log("You don't save this invoice");
 			}
-
-			$.ajax({
-				headers: { "X-CSRFToken": getCookie("csrftoken") },
-		    	url: String(urli),
-		    	type: "GET",
-		    	contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: true,
-                cache: false,
-		    	data: {
-		    		"invoice_no": invoice_no,
-		    		"client_key": client_key,
-		    		"sale_item": JSON.stringify(productObjects),
-		    		csrfmiddlewaretoken: '{{ csrf_token }}'
-		    	},
-		    	success: function (data) {
-		    		alert("success saved");
-		    		console.log(data);
-		    		str ='';
-
-		    		str_head = '<table class="table" id="tb_report"><thead><tr><th>No</th><th>Client</th><th>Seller</th><th>Total</th><th>Date</th><th>Action</th></tr></thead>';
-		    		str_body = '<tbody>';
-		    		str = str +''+ str_head +''+ str_body
-					for(i=0; i < data.result.length; i++){
-						str = str +' '+'<tr> <td>'+ data.result[i].invoice_id +'</td> <td> '+ data.result[i].customer +'</td> <td> '+ data.result[i].user +' </td> <td> $'+data.result[i].itotal+' </td> <td> '+ data.result[i].created_at +' </td> <td><a href="#">Update</a> | <a href="#">Delete</a> | Update</a> | <a href="#">Payment</a> </td></tr>'
-					}
-						
-					str = str +' '+	'</tbody></table></div>';
-					document.getElementById('report_table').innerHTML = str;
-				
-		    	}, error: function(data)
-		    	{
-		    		alert("Save error, please check information.");
-		    		console.log(data);
-		    	}
-		    });
 		
 		}
-		
+
+		function myDiscountPayment()
+		{
+			var discount = document.getElementById("discount_payment").value;
+			var total_payment = document.getElementById("total_payment").value; 
+			var total = 0;
+
+
+
+			document.getElementById("amount_payment").value = Number(total_payment);
+
+			if (Number(discount > 0)){
+				var discount = (Number(total_payment) * Number(discount)) / 100;
+				total = Number(total_payment) - discount;
+				document.getElementById("amount_payment").value = total;
+				document.getElementById("remaining_payment").value = total;
+
+
+				var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+				if (Number(receive_amount_payment) > 0)
+				{
+					var amount_payment = document.getElementById("amount_payment").value;
+					var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+
+					if (Number(receive_amount_payment) > Number(total))
+					{
+						document.getElementById("exchange_payment").value = Number(receive_amount_payment) - Number(total);
+						document.getElementById("remaining_payment").value = 0;
+					}else{
+						if (Number(total) >  Number(receive_amount_payment)) 
+						{
+							document.getElementById("remaining_payment").value = Number(total) -  Number(receive_amount_payment);
+							document.getElementById("exchange_payment").value = 0;
+						}else{
+							document.getElementById("remaining_payment").value = 0;
+							document.getElementById("exchange_payment").value = 0;
+						}
+					}
+				}
+			}
+		}
+
+
+		function discountPayment()
+		{
+
+			var discount = document.getElementById("discount_payment").value;
+			var total_payment = document.getElementById("total_payment").value; 
+			var total = 0;
+
+
+
+			document.getElementById("amount_payment").value = Number(total_payment);
+
+			if (Number(discount > 0)){
+				var discount = (Number(total_payment) * Number(discount)) / 100;
+				total = Number(total_payment) - discount;
+				document.getElementById("amount_payment").value = total;
+				document.getElementById("remaining_payment").value = total;
+
+
+
+				var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+				if (Number(receive_amount_payment) > 0)
+				{
+					var amount_payment = document.getElementById("amount_payment").value;
+					var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+
+					if (Number(receive_amount_payment) > Number(total))
+					{
+						document.getElementById("exchange_payment").value = Number(receive_amount_payment) - Number(total);
+						document.getElementById("remaining_payment").value = 0;
+					}else{
+						if (Number(total) >  Number(receive_amount_payment)) 
+						{
+							document.getElementById("remaining_payment").value = Number(total) -  Number(receive_amount_payment);
+							document.getElementById("exchange_payment").value = 0;
+						}else{
+							document.getElementById("remaining_payment").value = 0;
+							document.getElementById("exchange_payment").value = 0;
+						}
+					}
+				}
+			}
+		}
+
+		function myReceivePayment()
+		{
+			var amount_payment = document.getElementById("amount_payment").value;
+			var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+
+			if (Number(receive_amount_payment) > Number(amount_payment))
+			{
+				document.getElementById("exchange_payment").value = Number(receive_amount_payment) - Number(amount_payment);
+				document.getElementById("remaining_payment").value = 0;
+			}else{
+				if (Number(amount_payment) >  Number(receive_amount_payment)) 
+				{
+					document.getElementById("remaining_payment").value = Number(amount_payment) -  Number(receive_amount_payment);
+					document.getElementById("exchange_payment").value = 0;
+				}else{
+					document.getElementById("remaining_payment").value = 0;
+					document.getElementById("exchange_payment").value = 0;
+				}
+			}
+		}
+
+		function receivePayment()
+		{
+			var amount_payment = document.getElementById("amount_payment").value;
+			var receive_amount_payment = document.getElementById("receive_amount_payment").value;
+
+			if (Number(receive_amount_payment) > Number(amount_payment))
+			{
+				document.getElementById("exchange_payment").value = Number(receive_amount_payment) - Number(amount_payment);
+				document.getElementById("remaining_payment").value = 0;
+			}else{
+				if (Number(amount_payment) >  Number(receive_amount_payment)) 
+				{
+					document.getElementById("remaining_payment").value = Number(amount_payment) -  Number(receive_amount_payment);
+					document.getElementById("exchange_payment").value = 0;
+				}else{
+					document.getElementById("remaining_payment").value = 0;
+					document.getElementById("exchange_payment").value = 0;
+				}
+			}
+		}
+
+		function makePayment(id){
+			
+			var confirm = window.confirm("Do you want to save this invoice?")
+			if (confirm) {
+			
+				invoice_no = document.getElementById("invoice_no").value;
+				urli = document.getElementById("id_save_order_product_list").value;
+				ck_true_fail = document.getElementById("results").options[0]; // options[0] can show that <select> tag has or hasn't option
+				var client_key = "";
+				if (ck_true_fail)
+				{
+					var e = document.getElementById("results");	
+					client_key = e.options[e.selectedIndex].value;
+				}else{
+					alert("Please select client in box first.")
+					return;
+				}
+				
+				// For payment models
+				var total_amount = document.getElementById("total_payment").value;
+				var discount = document.getElementById("discount_payment").value;
+				var pay_amount = document.getElementById("amount_payment").value;
+				var receive_amount = document.getElementById("receive_amount_payment").value;
+				var remain = document.getElementById("remaining_payment").value;
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+			    	url: "/sell/make_invoice_payment",
+			    	type: "GET",
+			    	contentType: "application/json; charset=utf-8",
+	                dataType: "json",
+	                async: true,
+	                cache: false,
+			    	data: {
+			    		"myinvoice_no": invoice_no,
+			    		"client_key": client_key,
+			    		"total_amount": Number(total_amount),
+			    		"discount": Number(discount), 
+			    		"pay_amount": Number(pay_amount), 
+			    		"receive_amount": Number(receive_amount),
+			    		"remain": Number(remain),
+			    		"sale_item": JSON.stringify(productObjects),
+			    		csrfmiddlewaretoken: '{{ csrf_token }}'
+			    	},
+			    	success: function (data) {
+			    		alert("success saved");
+			    		console.log(data);
+			    		var mypayment = 0;
+			    		str ='';
+
+			    		str_head = '<table class="table" id="tb_report"><thead><tr><th>No</th><th>Client</th><th>Seller</th><th>Total</th><th>Date</th><th>Action</th></tr></thead>';
+			    		str_body = '<tbody>';
+			    		str = str +''+ str_head +''+ str_body
+						for(i=0; i < data.result.length; i++){
+							if (data.result[i].pay_amount > 0)
+							{
+								mypayment = data.result[i].pay_amount
+							} else{
+								mypayment = data.result[i].itotal
+							}
+							str = str +' '+'<tr> <td>'+ data.result[i].invoice_id +'</td> <td> '+ data.result[i].customer +'</td> <td> '+ data.result[i].user +' </td> <td> $'+mypayment+' </td><td> $'+data.result[i].receive_amount+'</td><td> '+ data.result[i].created_at +' </td> <td><a href="#">Update</a> | <a href="#">Delete</a> | <a href="#">Payment</a> </td></tr>'
+						}
+							
+						str = str +' '+	'</tbody></table></div>';
+						document.getElementById('report_table').innerHTML = str;
+					
+			    	}, error: function(data)
+			    	{
+			    		alert("Save error, please check information.");
+			    		console.log(data);
+			    	}
+			    });
+		    }else {
+			    console.log("Sell unsuccessful.");
+			    return;
+			}
+		}
+
+
 		
 	</script>
 

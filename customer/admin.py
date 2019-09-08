@@ -17,10 +17,10 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _, gettext_lazy
 # from admin_auto_filters.filters import AutocompleteFilter
 
+
 # class CustomerFilter(AutocompleteFilter):
 #     title = 'Search customer' # display title
 #     field_name = 'full_name' # name of the foreign key field
-
 
 class PaymentAdmin(admin.ModelAdmin):
 	list_display = ('invoice', 'pay_amount', 'remain', 'pay_status', 'created_at', 'pay_date')
@@ -42,7 +42,6 @@ class SaleInvoiceAdmin(admin.ModelAdmin):
 	list_display = ('invoice_number', 'user', 'customer','created_at', 'updated_at')
 	search_fields = ('invoice_number', 'user__first_name', 'customer__full_name', 'created_at', 'updated_at')
 	# readonly_fields = ('user')
-
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
 		if db_field.name == 'user': 
@@ -76,7 +75,7 @@ admin.site.register(SaleInvoice, SaleInvoiceAdmin)
 
 
 class SaleInvoiceItemAdmin(admin.ModelAdmin):
-	list_display = ('invoice','product', 'unit', 'unit_price', 'created_at')
+	list_display = ('invoice','product', 'unit', 'unit_price', 'discount', 'created_at')
 	search_fields = ('invoice__invoice_number', 'product__name')
 
 	view_on_site = False

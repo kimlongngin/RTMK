@@ -13,6 +13,8 @@ urlpatterns = [
    	url(r'^filter_product/$', views.filter_product, name='filter_product'),
    	url(r'^filter_customer/$', views.filter_customer, name='filter_customer'),
    	url(r'^save_order_product_list/$', views.save_order_product_list, name='save_order_product_list'),
+   	url(r'^check_invoice_product_list/$', views.check_invoice_product_list, name='check_invoice_product_list'),
+   	url(r'^make_invoice_payment/$', views.make_invoice_payment, name='make_invoice_payment'),
    
 ]
 

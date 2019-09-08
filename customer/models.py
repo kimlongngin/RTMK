@@ -74,21 +74,23 @@ STATUS_CHOICES = (
 	('FULL', 'Full'),
     ('OWE', 'Owe'),
 )
+
 class Payment(models.Model):
 	invoice = models.ForeignKey(SaleInvoice, related_name='payment_invoice', on_delete = models.CASCADE)
 	tax = models.FloatField(default=0.0, blank=True)
 	total_amount = models.FloatField(default=0.0)
-	discount = models.IntegerField(default=0, blank=True)
+	discount = models.IntegerField(default=0, blank=True) # Discount as percentage.
 	pay_amount = models.FloatField(default=0.0)
+	receive_amount = models.FloatField(default=0.0)
 	remain = models.FloatField(default=0.0)
 	pay_status = models.CharField(max_length=10, choices=STATUS_CHOICES)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
-	pay_date = models.DateTimeField(blank=True)
+	pay_date = models.DateTimeField(auto_now_add=True, blank=True)
 	is_status = models.BooleanField(default=True)
 
 	def __str__ (self):
-	 	return str(self.invoice )
+	 	return str(self.invoice)
 
 	class Meta:
 		ordering = ["-created_at", "-updated_at"]
