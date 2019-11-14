@@ -17,44 +17,40 @@
 		<div class="bs-example" data-example-id="striped-table">
 		    <table class="table table-striped">
 		      <thead>
-		        <tr style="background-color: #1b809e; color: white; height: 45px; font-size: 16px;">
+		        <!-- <tr style="background-color: #1b809e; color: white; height: 45px; font-size: 16px;"> -->
+		        <tr>
+		          <th>No</th>
 		          <th>Code</th>
 		          <th>Name</th>
 		          <th>Product type</th>
 		          <th>Unit</th>
-		          <th>Amount/unit</th>
-		          <th>Total amount</th>
-		          <th>Branch</th>
-		          <th>Controller</th>
-		          <th>Phone number</th>
+		          <th>Qty/unit</th>
+		          <th>Sub product</th>
+		          <th>Price</th>
+		          <th>Special price</th>		      
+		          <th>Total Qty</th>
+
+		        
 		        </tr>
 		      </thead>
+		      
 		      <tbody>
-		      	{% for stock in all_product_in_stock %}
-			        <tr>
-			        	<td scope="row">{{ stock.product.product_number }} </td>
-			        	<th>{{ stock.product.name }}</th>
-			        	<td>{{ stock.product.product_type }}</td>
-			        	<td>{{ stock.unit }}</td>
-			        	<td>{{ stock.amount }}</td>
-			        	<td>
-			        		{% if stock.unit <= 0 %}
-			        			{{ stock.amount }}
-			        		{% else %}
-			        			{% if stock.amount <= 0 %}
-			        				{% widthratio stock.product.product_type.amount 1 stock.unit  %}
-			        			{% else %}
-									{% widthratio stock.product.product_type.amount 1 stock.unit as mylenght %}
-									{{ mylenght |add:stock.amount }}
-			        			{% endif %}
-			        		{% endif %}
-			        	</td>
+				{% for stock in all_product_in_stock %}
+					<tr>
+						<td>{{forloop.counter}}</td>
+						<td scope="row"> {{ stock.product_code }} </td>
+						<td> {{ stock.name }} </td>
+						<td> {{ stock.product_type }} </td>
+						<td> {{ stock.iunit }} </td>
+						<td> {{ stock.product_per_amount }} </td>
+						<td> {{ stock.sub_amount }} </td>
+						<td> ${{ stock.price |floatformat:2 }} </td>
+						<td> ${{ stock.special_price |floatformat:2 }} </td>
+						
+						<td> {{ stock.total_product }} </td>
+					</tr>
+				{% endfor %}
 
-			        	<td>{{ stock.stock_location }}</td>
-			        	<td>{{ stock.stock_location.controller }}</td>
-			        	<td>{{ stock.stock_location.phone_number }}</td>
-			        </tr>
-		        {% endfor %}
 		       
 		      </tbody>
 		    </table>

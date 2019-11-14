@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,13 +46,10 @@ INSTALLED_APPS = [
     'location',
     'product_history',
     'product_unit',
-    'sell',
     'usercontrol',
     'MainView',
-    'customer'
+   
 ]
-
-
 
 # AUTH_USER_MODEL = 'usercontrol.CustomUser' # new
 
@@ -74,6 +72,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'product.apps.base_media',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',

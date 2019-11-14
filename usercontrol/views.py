@@ -18,6 +18,8 @@ from django.template import loader
 from django.views.generic.list import ListView
 from django.contrib import messages
 
+from django.core.paginator import Paginator
+
 
 def auth_logout(request):
   logout(request)
@@ -42,15 +44,12 @@ class UserLoginView(View):
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return redirect('MainView:main_view_index')
+			return redirect('product:product_index')
 		else:
 			return render(request, self.template_name, {'form':form})
 
 
 # User Login from the browser for the end user 
-
-
-
 class UserFormView(View):
 	form_class = RTUserForm
 	template_name = 'registration/registration_form.html'
@@ -94,7 +93,7 @@ class IndexView(generic.ListView):
 class ListUserView(SuccessMessageMixin, generic.ListView):
 	template_name =  'userprofile/list_user.html'
 	context_object_name = 'list_user'
-	paginate_by = 20
+	paginate_by = 30
 
 	@method_decorator(login_required(''))
 	def dispatch(self, request, *args, **kwargs):	
@@ -103,6 +102,28 @@ class ListUserView(SuccessMessageMixin, generic.ListView):
 	def get_queryset(self):
 		data = User.objects.filter()
 		return data
+
+class ListUserInvoice(generic.ListView): 
+	
+	template_name =  'userprofile/user_invoice.html'
+	context_object_name = 'all_user_invoices'
+	paginate_by = 100
+
+	@method_decorator(login_required(''))
+	def dispatch(self, request, *args, **kwargs):	
+		return super(self.__class__, self).dispatch(request, *args, **kwargs)	
+		
+	def get(self, request, *args, **kwargs):
+		page_num = 100
+		if self.kwargs['pk']:
+			pk = self.kwargs['pk']
+			data = SaleInvoice.objects.filter(user = pk, is_status=True).order_by('-created_at')
+
+			paginator = Paginator(data, page_num) # Show 25 contacts per page
+			page = request.GET.get('page')
+			contacts = paginator.get_page(page)
+			return render(request, self.template_name, {'all_invoices':contacts, 'paginator_num':page_num, 'all_data':data })
+
 
 
 

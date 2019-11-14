@@ -17,50 +17,171 @@ function getCookie(name) {
 }
 
 
+
+
 $(document).ready(function(){
-  $("#star1").click(function(){
-  	$productID = $("#productID").val();
-    $rate_number = 1;
-    $rate = 1;
-    $.ajax({
-    	type: "GET",
-    	headers: { "X-CSRFToken": getCookie("csrftoken") },
-    	url: "/product/request_rate",
-		data: {
-			'productID': $productID ,
-			'rate_number': $rate_number,
-			'rate':$rate,
-		},
-		success: function () {
-			// $('#message').html("<h2>Contact Form Submitted!</h2>")
-			console.log("success");
-		},
+
+    $url = $("#request_rate_one").val();
+
+    $("#star1").click(function(){
+        $productID = $("#productID").val();
+        $url = $("#request_rate_one").val();
+        $rate_number = 1;
+     
+        $.ajax({
+            type: "GET",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            url: $url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            cache: false,
+            data: {
+                'id': $productID ,
+                'n_rate': $rate_number
+            },
+            success: function (data) {
+                console.log(data)
+                console.log("success");
+            },error: function(error){
+                console.log(error);
+            }
+
+        });
 
     });
-
-  });
-
-
-  $("#star2").click(function(){
-    $productID = $("#productID").val();
-    $rate_number = 2;
-    $rate = 2;
-  });
-  $("#star3").click(function(){
-    $productID = $("#productID").val();
-    $rate_number = 3;
-    $rate = 3;
-  });
-  $("#star4").click(function(){
-    $productID = $("#productID").val();
-    $rate_number = 4;
-    $rate = 4;
-  });
-  $("#star5").click(function(){
-    $productID = $("#productID").val();
-    $rate_number = 5;
-    $rate = 5;
-  });
-
 });
+
+$(document).ready(function(){
+
+    $url = $("#request_rate_one").val();
+
+    $("#star2").click(function(){
+        $productID = $("#productID").val();
+        $url = $("#request_rate_one").val();
+        $rate_number = 2;
+     
+        $.ajax({
+            type: "GET",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            url: $url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            cache: false,
+            data: {
+                'id': $productID ,
+                'n_rate': $rate_number
+            },
+            success: function (data) {
+                console.log(data)
+                console.log("success");
+            },error: function(error){
+                console.log(error);
+            }
+
+        });
+
+    });
+});
+
+$(document).ready(function(){
+
+    $url = $("#request_rate_one").val();
+
+    $("#star3").click(function(){
+        $productID = $("#productID").val();
+        $url = $("#request_rate_one").val();
+        $rate_number = 3;
+     
+        $.ajax({
+            type: "GET",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            url: $url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            cache: false,
+            data: {
+                'id': $productID ,
+                'n_rate': $rate_number
+            },
+            success: function (data) {
+                console.log(data)
+                console.log("success");
+            },error: function(error){
+                console.log(error);
+            }
+
+        });
+
+    });
+});
+
+$(document).ready(function(){
+
+    $url = $("#request_rate_one").val();
+
+    $("#star4").click(function(){
+        $productID = $("#productID").val();
+        $url = $("#request_rate_one").val();
+        $rate_number = 4;
+     
+        $.ajax({
+            type: "GET",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            url: $url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            cache: false,
+            data: {
+                'id': $productID ,
+                'n_rate': $rate_number
+            },
+            success: function (data) {
+                console.log(data)
+                console.log("success");
+            },error: function(error){
+                console.log(error);
+            }
+        });
+    });
+});
+
+
+$(document).ready(function(){
+
+    $url = $("#request_rate_one").val();
+
+    $("#star5").click(function(){
+        $productID = $("#productID").val();
+        $url = $("#request_rate_one").val();
+        $rate_number = 5;
+     
+        $.ajax({
+            type: "GET",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            url: $url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            cache: false,
+            data: {
+                'id': $productID ,
+                'n_rate': $rate_number
+            },
+            success: function (data) {
+                console.log(data)
+                console.log("success");
+            },error: function(error){
+                console.log(error);
+            }
+
+        });
+
+    });
+});
+
+
 

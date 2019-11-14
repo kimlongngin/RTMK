@@ -1,96 +1,355 @@
 {% extends 'product/base.html' %}
-
+{% load tz %}
 {% block title %} Product {% endblock %}
 
 {% block body %}
+
+
+	{% if messages %}
+		<div class="row responsive-utilities-test visible-on" id='display_msg'>
+			<div  style="height:40px; display: block; color: #468847 !important;  background-color: #dff0d8; border: 1px solid #d6e9c6;">
+				{% for message in messages %}
+					<div class="col-md-10">
+						<span class="visible-lg-block" style="padding-left: 20px; padding-top: 7px; font-size: 18px;">✔ {{ message }}</span>
+					</div>
+					<div style="padding-top: 7px; float: right; padding-right: 20px;" >
+						<button onclick="closeMessage()" style=" background:none; background-color: none !important; border:none !important;"><span class="glyphicon glyphicon-remove"></span></button>
+					</div>
+				{% endfor %}
+				
+			</div>
+		</div>
+	{% endif %}
+
 
 	<div class="index_background">
 		{% if all_product %}
 
 			<div class="head_index">
-				
 
-				<div class="home_title">
-					<p> <span class="glyphicon glyphicon-list-alt">  </span> Product list </p>
-				</div>
-
-				<div class="head_pad_index" style="margin-bottom: 0px;">
-
-					<nav class="navbar navbar-default" style=" border: none !important; box-shadow: none !important; background: none !important;">
-				      <div class="container-fluid" style="padding-left: 0px !important;">
-				        
-				        <div class="navbar-header">
-				          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="true" style="border:none !important;">
-				            <span class="glyphicon glyphicon-search"></span>
-				          </button>
-				          <!-- <p class="navbar-brand">Find your product here</p> -->
-				        </div>
-
-				        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
-							<form class="form-inline" action="{% url 'product:product_search' %}" method="get" style="margin-top: 4px;">
-		  						{% csrf_token %}
-		  						<div class="form-group">
-							    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-							    <div class="input-group">
-							    <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
-							      <input type="text" class="form-control" name= "q" value="" placeholder="Enter product name, id, code">		
-							  	</div>
-							  </div>
-							  <button type="submit" class="btn btn-primary">Seach</button>
-							</form>
-				        </div>
-
-
-				      </div>
-				    </nav>
-				</div>
+				<div class="product_title_home"> 
+					<p style="color:#ec008c;">New product</p>
+				</div>	
 
 				
+
 				<div class="row row-no-gutters">
 					{% for product in all_product %}
-						<a href="{% url 'product:product_detail' product.id %}">
-						  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
-								<div class="product_list">
-									{% if product.default_image %}
-											<div style="margin-bottom: 20px;" class="image_wrapper">
-												<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
-											</div>	
+					  	<div class="col-xs-12 col-sm-6 col-md-3 product_box">
+					  	
+							<div class="product_list">
+								<div style="color: #fff; background: #ed008c; height: 55px; text-align: center;padding-top: 10px;">
+									<p class="product_title">{{ product.name }}</p>
+								</div>
+								
+
+								<a href="{% url 'product:product_detail' product.id %}" style="text-decoration: none;">
+									<div style="border:1px solid #ed008c; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; background-color: white;">
+										{% if product.default_image %}
+												<div style="margin-bottom: 20px;" class="image_wrapper">
+													<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
+												</div>	
+										{% endif %}
+										<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+
+										<div>
+											
+											{% now "YmdHis" as mynow %}
+											
+								        	{% if product.promotion_set.all.count > 0 %}
+												{% for p in product.promotion_set.all %}	
+													
+													<!--  compare start_date and end_date with today date -->
+													{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+														
+														{% if p.is_status == True %}
+															
+								        					<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ p.discount_as_price |floatformat:2 }} </span>
+											        		</p>
+
+
+								        				{% else %}
+								        					{% if product.special_price %}
+																<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+
+															{% else %}
+																<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															{% endif %}
+								        				{% endif %}
+
+								        			{% else %}
+														{% if product.special_price > 0 %}
+															<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+											        		</p>
+														{% else %}
+															<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															
+														{% endif %}
+
+													{% endif %}
+						        				{% endfor %}
+
+						        			{% else %}
+												
+												{% if product.special_price > 0 %}
+													<p class="product_price">
+									        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+									        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+									        		</p>
+												{% else %}
+													<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+											{% endif %}
+
+
+
+										</div>
+									</div>
+								</a>
+
+						
+								<a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal{{ product.id }}" style="text-decoration: none !important;">
+									<div style="color: #fff; background: #ed008c; height: 40px; text-align: center;padding-top: 0px; border-radius: 3px 3px;">
+										<p class="product_title"><span class="glyphicon glyphicon-shopping-cart"></span> Order</p>
+									</div>
+								</a>
+
+						  	</div>
+						</div>
+
+						<!-- Popup model form for order product -->
+						<div class="modal fade" id="exampleModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding: 20px !important;">
+						  <div class="modal-dialog" role="document" style="width: 50% !important; border: none !important; border-radius: 0px !important; margin-left: auto; margin-right: auto;">
+						    <div class="modal-content" style="border: none !important; border-radius: 0px !important;">
+						      <div class="modal-header">
+						        <h4 class="modal-title" id="exampleModalLabel"> ORDER FORM </h4>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+
+					      	<div style="padding-left:15px;">
+			        			<p style="color:#ec008c; font-family: 'Futura', Arial, Helvetica, sans-serif; font-size: 16px;">{{ product.name }}</p>
+			        			<p style="color:#ec008c;">{{ product.product_number }}</p>
+
+								{% now "YmdHis" as mynow %}
+			        			{% if product.promotion_set.all.count > 0 %}
+									
+									{% for p in product.promotion_set.all %}
+
+										<!--  compare start_date and end_date with today date -->
+								
+										{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+											{% if p.is_status == True %}
+												<p style="color:#ec008c;"> Price: ${{ p.discount_as_price |floatformat:2 }}</p>
+					        				{% else %}
+					        					{% if product.special_price %}
+					        						<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+													
+												{% else %}
+													<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+					        				{% endif %}
+										
+										{% else %}
+											{% if product.special_price %}
+												<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+											{% else %}
+												<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+											{% endif %}
+
+										{% endif %}
+										<!-- End compare start_date and end_date -->
+
+
+			        				{% endfor %}
+
+			        			{% else %}
+									
+									{% if product.special_price %}
+										<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+									{% else %}
+										<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
 									{% endif %}
-									<div><p class="product_name">{{ product.name }}</p></div>
-									<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
-									<div><p class="product_price">Price: $ {{ product.price }}</p></div>
-							  	</div>
-							</div>
-						</a>
+								{% endif %}
+
+
+			        		</div>
+			        		<hr/>
+
+						    <form action="{% url 'product:save_order_index' %}" method="post">
+								{% csrf_token %}
+							    <div class="modal-body">
+							        <div class="row" style="padding-left:15px !important; padding-right: 15px !important;">
+							        	<div class="col-md-12">
+							        			{% now "YmdHis" as mynow %}
+
+							        			{% if product.promotion_set.all.count > 0 %}
+													{% for p in product.promotion_set.all %}	
+														{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+															{% if p.is_status == True %}
+																<input type="hidden" value="{{ p.discount_as_price }}" id="price" name="price">
+
+									        				{% else %}
+									        					{% if product.special_price %}
+																	<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+																{% else %}
+																	<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																{% endif %}
+									        				{% endif %}
+														{% else %}
+
+															{% if product.special_price %}
+																<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+															{% else %}
+																<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																
+															{% endif %}
+														{% endif %}
+							        				{% endfor %}
+
+							        			{% else %}
+													
+													{% if product.special_price %}
+														<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+													{% else %}
+														<input type="hidden" value="{{ product.price }}" id="price" name="price">
+														
+													{% endif %}
+
+												{% endif %}
+
+												<input type="hidden" value="{{ product.id }}" id="id_product_id" name ="id_product_id">
+
+								        		<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ឈ្មោះ (Name)</label>
+													<input type="text" class="form-control" id="id_name" name="id_name" aria-describedby="helpBlock2" required>
+												</div>
+												
+												<div class="form-group has-warning" style="">
+												  <label class="control-label" for="inputSuccess1">លេខទូរស័ព្ទ (Phone number)</label>
+												  <input type="text" class="form-control" id="id_phone_number" name="id_phone_number" required placeholder="(012)010-203">
+												</div>
+
+												<div class="form-group has-success">
+												  <label class="control-label" for="inputSuccess1">អុីម៉ែល (Email)</label>
+												  <input type="email" class="form-control" id="id_email" name="id_email" placeholder="example@mail.com">
+												</div>
+
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ចំនួន (Unit)</label>
+													<input type="number" class="form-control" id="id_quantity" name="id_quantity" required>
+												</div>
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">អាស័យដ្ឋាន (Address)</label>
+													<textarea  class="form-control" id="id_address" name="id_address" required rows="10"></textarea>
+												</div>
+											
+
+										</div>
+							        </div>
+
+							      </div>
+
+							      <div class="modal-footer">
+							      	<div>
+
+							      		<div>
+								    		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								    		<input type="hidden" name="" id="sub_invoice_no" value="">
+					        				
+							        	<button type="submit" class="btn btn-primary" onclick=""><span class="glyphicon glyphicon-usd"></span> Order </button>
+							    		</div>
+
+
+
+							      	</div>
+							      </div>
+							</form>
+
+						    </div>
+						  </div>
+						</div>
+						
 					{% endfor %}
 				</div>
-
+	
 		{% else %}
 			<div style=" text-align: center; margin-top: 10px;"><h3> Don't have products in stock </h3></div>
 		{% endif %}
+
+
+		<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+
 	</div>
 
 
 	<div class="pagination_index">
 				
-				{% if is_paginated %}
-				<hr>
-					<ul class="pagination" style="margin:0px 0px !important">
-					{% if page_obj.has_previous %}
-					    <li>
-					        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
-					    </li>
-					{% endif %}
-					    <li class="">
-					        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
-					    </li>
-					{% if page_obj.has_next %}
-					    <li>
-					        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
-					    </li>
-					{% endif %}
-					</ul>
-				
-				{% endif %}
-			</div>
+		{% if is_paginated %}
+		<hr>
+			<ul class="pagination" style="margin:0px 0px !important">
+			{% if page_obj.has_previous %}
+			    <li>
+			        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+			    </li>
+			{% endif %}
+			    <li class="">
+			        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+			    </li>
+			{% if page_obj.has_next %}
+			    <li>
+			        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+			    </li>
+			{% endif %}
+			</ul>
+		
+		{% endif %}
+	</div>
+
+	{% block javascript %}
+
+		<script type="text/javascript">
+
+			function closeMessage()
+			{
+				document.getElementById("display_msg").style.display ='none';	
+			}
+
+
+
+			// When the user scrolls down 20px from the top of the document, show the button
+			window.onscroll = function() {scrollFunction()};
+
+			function scrollFunction() {
+			  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+			    document.getElementById("myBtn").style.display = "block";
+			  } else {
+			    document.getElementById("myBtn").style.display = "none";
+			  }
+			}
+
+			// When the user clicks on the button, scroll to the top of the document
+			function topFunction() {
+			  document.body.scrollTop = 0;
+			  document.documentElement.scrollTop = 0;
+			}
+
+			$('#myCollapsible').collapse({
+			  toggle: false
+			})
+		</script>
+
+
+	{% endblock %}
 {% endblock %}

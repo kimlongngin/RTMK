@@ -13,6 +13,8 @@ from location.models import Location
 
 # Create your models here.
 
+
+
 def upload_location(instance, filename):
 		filebase, extension = filename.split(".")
 		return "%s/%s.%s" %(instance.id, instance.id, extension)
@@ -23,6 +25,8 @@ def validate_file_extension(value):
     if not ext.lower() in valid_extensions:
         raise ValidationError(u'Unsupported file extension.')
 
+
+
 def user_directory_path(request, filename):
 	# return "files/users/%s/%s" % (request.user.id, filename)
     return '/'.join(['content', request.name, filename])
@@ -30,7 +34,7 @@ def user_directory_path(request, filename):
 class ProductCategory(models.Model):
     name = models.CharField(max_length=255)
     icon = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
-    description = models.TextField()
+    description = models.TextField() 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     is_status = models.BooleanField(default=True)
@@ -105,7 +109,7 @@ class Rate(models.Model):
 	rate = models.FloatField(default=0.0)
 	is_status = models.BooleanField(default=True)
 	
-
+	
 class SubProductImage(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	name = models.CharField(max_length = 150)
@@ -143,14 +147,13 @@ class StockLocation(models.Model):
 		def __unicode__(self):
 			return self.name
 			
-
 class ProductInStock(models.Model):
-	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, related_name='product_in_stock', on_delete=models.CASCADE)
 	title = models.CharField(max_length=150, null=True, blank=True)
 	# unit_title = models.CharField(max_length=50, blank=True) # Bottle, Tube, Box 
 	unit = models.IntegerField(default=0) # Amount of Unit
 	amount =  models.IntegerField(default=0) # Amount product of product in stock per Unit
-	stock_location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
+	# stock_location = models.ForeignKey(StockLocation, on_delete=models.CASCADE)
 	description = models.TextField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now_add=True)
@@ -167,9 +170,9 @@ class ProductInStock(models.Model):
 class Promotion(models.Model):
 	title = models.CharField(max_length=200, null=True, blank=None)
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
-	discount_as_percentag = models.IntegerField(default=0) 
+	# discount_as_percentag = models.IntegerField(default=0) 
 	discount_as_price = models.FloatField(default=0.0) 
-	promotion_image = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
+	# promotion_image = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
 	description = models.TextField()
 	start_date = models.DateTimeField(auto_now=False, auto_now_add=False)
 	end_date = models.DateTimeField(auto_now=False, auto_now_add=False)
@@ -254,6 +257,55 @@ class ProductHistory(models.Model):
 	    ordering = ['-created_at']
 	    def __unicode__(self):
 	        return self.name
+
+def increment_invoice_number():
+	last_product = OrderProduct.objects.all().order_by('id').last()
+	if not last_product:
+		return 'INV00001'
+	width = 5
+	product_number = last_product.invoice_number
+	product_int = int(product_number.split('INV')[-1])
+	new_product_int = product_int + 1
+	formatted = (width - len(str(new_product_int))) * "0" + str(new_product_int)
+	new_product_int = 'INV' + str(formatted)
+	return str(new_product_int)
+
+class OrderProduct(models.Model): 
+	invoice_number = models.CharField(max_length=500, null=True, blank=True, 
+        validators=[RegexValidator(regex='^[a-zA-Z0-9]*$',
+        message='Produce number must be Alphanumeric',code='Number is invalide'),], 
+        default=increment_invoice_number)
+	product = models.ForeignKey(Product, related_name='order_product', on_delete=models.CASCADE)
+	customer_name = models.CharField(max_length=500)
+	phone_number = models.CharField(max_length=120)
+	email = models.CharField(max_length=120)
+	quantity = models.IntegerField(default=0) 
+	price = models.FloatField(default=0.0)
+	address = models.TextField()
+	activation = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__ (self):
+	 	return self.invoice_number 
+
+	class Meta:
+		ordering = ["-created_at", "-updated_at"]
+
+class Media(models.Model):
+	name = models.CharField(max_length=100)
+	logo = models.FileField(blank=True, upload_to=user_directory_path,  validators=[validate_file_extension])
+	url = models.CharField(max_length=500)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now_add=True)
+	is_status = models.BooleanField(default=True)
+
+	def __str__ (self):
+	 	return self.name 
+
+	class Meta:
+		ordering = ["-created_at", "-updated_at"]
 
 
 

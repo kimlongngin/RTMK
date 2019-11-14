@@ -1,46 +1,132 @@
 {% extends 'product/base.html' %}
-
+{% block title %} Detail {% endblock %}
 {% block body %}
-	{% if products %}
-		{% for product in products %}
+	{% if product %}
+
+	<!-- .rate > input:checked ~ label {
+	    color: #ffc700;    
+	} -->
+
+			{% if messages %}
+				<div class="row responsive-utilities-test visible-on" id='display_msg'>
+					<div  style="height:40px; display: block; color: #468847 !important;  background-color: #dff0d8; border: 1px solid #d6e9c6;">
+						{% for message in messages %}
+							<div class="col-md-10">
+								<span class="visible-lg-block" style="padding-left: 20px; padding-top: 7px; font-size: 18px;">✔ {{ message }}</span>
+							</div>
+							<div style="padding-top: 7px; float: right; padding-right: 20px;" >
+								<button onclick="closeMessage()" style=" background:none; background-color: none !important; border:none !important;"><span class="glyphicon glyphicon-remove"></span></button>
+							</div>
+						{% endfor %}
+						
+					</div>
+				</div>
+			{% endif %}
+
 			<div class="row mytop" >
 
 				<div class="col-md-7" style="text-align: center;">
 					
 					{% if product.default_image %}
 						<input type="hidden" value = "{{ product.id }}" id="productID" name ="productName">
+						<input type="hidden" value = "{% url 'product:request_rate_one' %}" id="request_rate_one" name ="productName">
+						
 						<img src = "../../../{{ product.default_image.url }}" class="img-responsive detail_image_size" id="imgdetail" name="imgdetail">
 					{% endif %}
-				<!-- 	<a href="" class="btn btn-default order_button" style="width: 180px; margin-left: auto; margin-right: auto;"> Order </a> -->
+
 				</div>
 
 	  			<div class="col-md-5">
-	  				<div style="padding-bottom: 5px; border-bottom: 1px solid #f1f1f1;">
-		  				<p class="product_title_detail" style="margin-bottom: 25px;"> {{ product.name }} </p>
+	  				<div style="padding-bottom: 5px; border-bottom: 1px solid #ec008c;">
+		  				<p class="product_title_cart" style="margin-bottom: 25px;"> {{ product.name }} </p>
 		  				<!-- <p> Rate: 1 | 2 | 3 | 4 | 5 </p>  -->
+
+		  					{% if all_rate > 0 %}
+								<input type="hidden" id="myrate" value="{{ all_rate }}">
+							{% else %}
+								<input type="hidden" id="myrate" value="0">
+		  					{% endif %}
+							
 							<p class="rate">
-							    <input type="radio" id="star5" name="rate" value="5" />
-							    <label for="star5" title="text">5 stars</label>
-							    <input type="radio" id="star4" name="rate" value="4" />
-							    <label for="star4" title="text">4 stars</label>
-							    <input type="radio" id="star3" name="rate" value="3" />
-							    <label for="star3" title="text">3 stars</label>
-							    <input type="radio" id="star2" name="rate" value="2" />
-							    <label for="star2" title="text">2 stars</label>
-							    <input type="radio" id="star1" name="rate" value="1" />
-							    <label for="star1" title="text">1 star</label>
+							    <input type="radio" id="star5" name="rate" value="5"/>
+							    <label for="star5" title="text" id="r5">5 stars</label>
+							    <input type="radio" id="star4" name="rate" value="4"/>
+							    <label for="star4" title="text" id="r4">4 stars</label>
+							    <input type="radio" id="star3" name="rate" value="3"/>
+							    <label for="star3" title="text" id="r3">3 stars</label>
+							    <input type="radio" id="star2" name="rate" value="2"/>
+							    <label for="star2" title="text" id="r2">2 stars</label>
+							    <input type="radio" id="star1" name="rate" value="1"/>
+							    <label for="star1" title="text" id="r1">1 star</label>
 						 	</p>
-		  					<p> 
-		  						<span class="product_reivew"> {{ product.review | add:1 }} custom reviews </span>  | <span class="product_reivew"> 50 custom orders</span>
+		  					<p style="padding-top: 7px;"> 
+								{% if order_count %}
+									{% if order_count > 0 %}
+		  								<span class="product_reivew"> {{ product.review | add:1 }} reviews </span>  |<span class="product_reivew">{{ order_count }} orders</span>
+									{% else %}
+										<span class="product_reivew"> {{ product.review | add:1 }} reviews </span>  |<span class="product_reivew">{{ order_count }} order</span>
+		  							{% endif %}
+		  						{% else %}
+		  							<span class="product_reivew"> {{ product.review | add:1 }} reviews </span>  |<span class="product_reivew">0 order</span>
+		  						{% endif %}
 		  					</p>
 					</div>
 
-					<div>
-						{% if product.special_price and product.special_price > 0 %}
-							<p class="product_detail_price" style="margin-top:10px;"> Special price: $ {{ product.special_price }}</p>
+
+					{% now "YmdHis" as mynow %}
+        			{% if product.promotion_set.all.count > 0 %}
+						
+						{% for p in product.promotion_set.all %}
+
+							<!--  compare start_date and end_date with today date -->
+					
+							{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+								{% if p.is_status == True %}
+									<p  style="margin-top:10px;"> Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span> <span style="color:red;"> ${{ p.discount_as_price |floatformat:2 }}</span></p>
+		        				{% else %}
+		        					{% if product.special_price %}
+		        						<p  style="margin-top:10px;">
+						        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+						        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+						        		</p>
+										
+									{% else %}
+										<p style="margin-top:10px;"> Price: ${{ product.price |floatformat:2 }}</p>
+										
+									{% endif %}
+		        				{% endif %}
+							
+							{% else %}
+								{% if product.special_price %}
+									<p  style="margin-top:10px;">
+					        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+					        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+					        		</p>
+								{% else %}
+									<p  style="margin-top:10px;"> Price: ${{ product.price |floatformat:2 }}</p>
+								{% endif %}
+
+							{% endif %}
+							<!-- End compare start_date and end_date -->
+
+
+        				{% endfor %}
+
+        			{% else %}
+						
+						{% if product.special_price %}
+							<p  style="margin-top:10px;">
+			        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+			        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+			        		</p>
 						{% else %}
-							<p style="margin-top:10px;">Price {{ product.price }}</p>
+							<p  style="margin-top:10px;">Price: ${{ product.price |floatformat:2 }}</p>
 						{% endif %}
+					{% endif %}
+
+
+					<div>
 							<p>Product ID: {{ product.product_number }}</p>
 							<p>Serial Number: {{ product.serial_number }}</p>
 					</div>
@@ -49,64 +135,561 @@
 						<p class="product_title_detail">Product detail</p>					
 						<p> {{ product.description }} </p>
 					</div>
-	  			</div>
-			</div>
+					<a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal" style="text-decoration: none !important;">
+						<div style="color: #fff; background: #ed008c; height: 40px; text-align: center;padding-top: 0px; border-radius: 3px 3px;">
+							<p class="product_title"><span class="glyphicon glyphicon-shopping-cart"></span> Order</p>
+						</div>
+					</a>
 
+	  			</div>
+
+			</div>
+			
 
 
 			{% if product.subproductimage_set.all.count > 0 %}
 				<div class="product_title_more_detail"> 
-						<p>More detail</p>
+						<p style="color:#ec008c;">More detail</p>
 				</div>
 
-				<div class = "row" style="margin-bottom: 20px; margin:auto; ">
+				<div class = "row" style="margin-bottom: 5px; background: rgba(236,0,140,.7490196078);
+    padding: 4rem; padding-top: 10px;">
 					
 						{% for j in product.subproductimage_set.all  %}
 							{% if j.is_status == True %}
 								<div class="col-md-6" style="margin-bottom: 20px; border: 0px solid red;" id="id_subproduct{{j.id}}">
 
-									<!-- <p class="bg-primary sub_title"> {{ j.name }} </p> -->
-									<img src = "../../../{{ j.sub_image.url }}" class="img-rounded img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="margin:auto;">
-									<p class="sub_title" style="margin:auto;text-align: center;"> {{ j.name }} </p>
-									<p class="text-justify" style="padding-top:5px; text-align: center;"> {{ j.description }} </p>
-
-									<!-- <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-									  <div class="panel panel-default">
-									    <div class="panel-heading" role="tab" id="headingThree">
-									      <h4 class="panel-title">
-									        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-									          <p class="sub_title"> {{ j.name }} </p>
-									        </a>
-									      </h4>
-									    </div>
-									    
-									    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-									      <div class="panel-body">
-									       		<p class="text-justify" style="padding-top:5px;"> {{ j.description }} </p>
-									      </div>
-									    </div>
-									  </div>
-									</div> -->
-
-
+									<img src = "../../../{{ j.sub_image.url }}" class="img-responsive detail_sub_image_size" id="imgdetail" name="imgdetail" style="margin:auto;">
+									<p class="sub_title" style="margin:auto;text-align: center; color: #ffffff;"> {{ j.name }} </p>
+									<p class="text-justify" style="padding-top:5px; text-align: center; color: #ffffff;"> {{ j.description }} </p>
 								</div>
 							{% endif %}
 						{% endfor %}
 					
 				</div>
+				
+				<a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal" style="text-decoration: none !important;">
+					<div class = "row" style="color: #fff; background: #ed008c; height: 50px; text-align: center;padding-top: 0px; border-radius: 3px 3px; margin-bottom: 20px; padding-top: 5px;">
+						
+					 		<p class="product_title"><span class="glyphicon glyphicon-shopping-cart"></span> Order</p>
+					 	
+					</div>
+				</a>
+
+			{% endif %}
+
+
+
+			<!-- Popup model form for order product -->
+			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  <div class="modal-dialog" role="document" style="width: 50% !important; border: none !important; border-radius: 0px !important; margin-left: auto; margin-right: auto;">
+			    <div class="modal-content" style="border: none !important; border-radius: 0px !important;">
+				    <div class="modal-header">
+				        <h4 class="modal-title" id="exampleModalLabel"> ORDER FORM </h4>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				    </div>
+
+				   	<div style="padding-left:15px;">
+	        			<p style="color:#ec008c;font-family: 'Futura', Arial, Helvetica, sans-serif; font-size: 16px;">{{ product.name }}</p>
+	        			<p style="color:#ec008c;">{{ product.product_number }}</p>
+
+	        			{% now "YmdHis" as mynow %}
+			        			{% if product.promotion_set.all.count > 0 %}
+									
+									{% for p in product.promotion_set.all %}
+
+										<!--  compare start_date and end_date with today date -->
+								
+										{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+											{% if p.is_status == True %}
+												<p style="color:#ec008c;"> Price: ${{ p.discount_as_price |floatformat:2 }}</p>
+					        				{% else %}
+					        					{% if product.special_price %}
+					        						<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+													
+												{% else %}
+													<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+					        				{% endif %}
+										
+										{% else %}
+											{% if product.special_price %}
+												<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+											{% else %}
+												<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+											{% endif %}
+
+										{% endif %}
+										<!-- End compare start_date and end_date -->
+
+
+			        				{% endfor %}
+
+			        			{% else %}
+									
+									{% if product.special_price %}
+										<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+									{% else %}
+										<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+									{% endif %}
+								{% endif %}
+	        		</div>
+
+
+
+
+        		<hr/>
+
+			     	<form action="{% url 'product:save_order' %}" method="post">
+						{% csrf_token %}
+					    <div class="modal-body">
+				        <div class="row">
+				        	<div class="col-md-12 col-sm-6">
+
+									{% now "YmdHis" as mynow %}
+
+							        			{% if product.promotion_set.all.count > 0 %}
+													{% for p in product.promotion_set.all %}	
+														{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+															{% if p.is_status == True %}
+																<input type="hidden" value="{{ p.discount_as_price }}" id="price" name="price">
+
+									        				{% else %}
+									        					{% if product.special_price %}
+																	<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+																{% else %}
+																	<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																{% endif %}
+									        				{% endif %}
+														{% else %}
+
+															{% if product.special_price %}
+																<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+															{% else %}
+																<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																
+															{% endif %}
+														{% endif %}
+							        				{% endfor %}
+
+							        			{% else %}
+													
+													{% if product.special_price %}
+														<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+													{% else %}
+														<input type="hidden" value="{{ product.price }}" id="price" name="price">
+														
+													{% endif %}
+
+												{% endif %}
+
+												<input type="hidden" value="{{ product.id }}" id="id_product_id" name ="id_product_id">
+
+					        		<div class="form-group has-warning">
+										<label class="control-label" for="inputSuccess1">ឈ្មោះ (Name)</label>
+										<input type="text" class="form-control" id="id_name" name="id_name" aria-describedby="helpBlock2" required>
+									</div>
+									
+									<div class="form-group has-warning" style="">
+									  <label class="control-label" for="inputSuccess1">លេខទូរស័ព្ទ (Phone number)</label>
+									  <input type="text" class="form-control" id="id_phone_number" name="id_phone_number" required placeholder="(012)010-203">
+									</div>
+
+									<div class="form-group has-success">
+									  <label class="control-label" for="inputSuccess1">អុីម៉ែល (Email)</label>
+									  <input type="email" class="form-control" id="id_email" name="id_email" placeholder="example@mail.com">
+									</div>
+
+									<div class="form-group has-warning">
+										<label class="control-label" for="inputSuccess1">ចំនួន (Unit)</label>
+										<input type="number" class="form-control" id="id_quantity" name="id_quantity" required>
+									</div>
+									<div class="form-group has-warning">
+										<label class="control-label" for="inputSuccess1">អាស័យដ្ឋាន (Address)</label>
+										<textarea  class="form-control" id="id_address" name="id_address" required rows="10"></textarea>
+									</div>
+							
+							</div>
+				        </div>
+
+				      </div>
+
+				      <div class="modal-footer">
+				      	<div>
+				      		<div>
+					    		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					    		<input type="hidden" name="" id="sub_invoice_no" value="">
+		        				
+				        	<button type="submit" class="btn btn-primary" onclick=""><span class="glyphicon glyphicon-usd"></span> Order </button>
+				    		</div>
+				      	</div>
+				      </div>
+					</form>
+
+
+
+			    </div>
+			  </div>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			{% if all_redata %}
+				<div class="product_title_more_detail"> 
+					<p style="color:#ec008c;">Related products</p>
+				</div>
+				
+				<div class="row row-no-gutters">
+					{% for product in all_redata %}
+						<div class="col-xs-12 col-sm-6 col-md-3 product_box">
+						  	
+							<div class="product_list">
+								<div style="color: #fff; background: #ed008c; height: 55px; text-align: center;padding-top: 10px;">
+									<p class="product_title">{{ product.name }}</p>
+								</div>
+
+								<a href="{% url 'product:product_detail' product.id %}" style="text-decoration: none;">
+									<div style="border:1px solid #ed008c; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; background-color: white;">
+										{% if product.default_image %}
+												<div style="margin-bottom: 20px;" class="image_wrapper">
+													<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
+												</div>	
+										{% endif %}
+										<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+
+
+
+
+
+										<div>
+										
+											{% now "YmdHis" as mynow %}
+											
+								        	{% if product.promotion_set.all.count > 0 %}
+												{% for p in product.promotion_set.all %}	
+													
+													<!--  compare start_date and end_date with today date -->
+													{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+														
+														{% if p.is_status == True %}
+															
+								        					<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ p.discount_as_price |floatformat:2 }} </span>
+											        		</p>
+
+
+								        				{% else %}
+								        					{% if product.special_price %}
+																<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+
+															{% else %}
+																<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															{% endif %}
+								        				{% endif %}
+
+								        			{% else %}
+														{% if product.special_price > 0 %}
+															<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+											        		</p>
+														{% else %}
+															<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															
+														{% endif %}
+
+													{% endif %}
+						        				{% endfor %}
+
+						        			{% else %}
+												
+												{% if product.special_price > 0 %}
+													<p class="product_price">
+									        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+									        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+									        		</p>
+												{% else %}
+													<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+											{% endif %}
+
+										</div>
+
+
+
+
+
+									</div>
+								</a>
+
+
+								<a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal{{ product.id }}" style="text-decoration: none !important;">
+									<div style="color: #fff; background: #ed008c; height: 40px; text-align: center;padding-top: 0px; border-radius: 3px 3px;">
+										<p class="product_title"><span class="glyphicon glyphicon-shopping-cart"></span> Order</p>
+									</div>
+								</a>
+
+
+
+						  	</div>
+						</div>
+
+
+
+
+						<!-- Popup model form for order product -->
+						<div class="modal fade" id="exampleModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding: 20px !important;">
+						  <div class="modal-dialog" role="document" style="width: 50% !important; border: none !important; border-radius: 0px !important; margin-left: auto; margin-right: auto;">
+						    <div class="modal-content" style="border: none !important; border-radius: 0px !important;">
+						      <div class="modal-header">
+						        <h4 class="modal-title" id="exampleModalLabel"> ORDER FORM </h4>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+
+					      	<div style="padding-left:15px;">
+			        			<p style="color:#ec008c;font-family: 'Futura', Arial, Helvetica, sans-serif; font-size: 16px;">{{ product.name }}</p>
+			        			<p style="color:#ec008c;">{{ product.product_number }}</p>
+			        			{% now "YmdHis" as mynow %}
+			        			{% if product.promotion_set.all.count > 0 %}
+									
+									{% for p in product.promotion_set.all %}
+
+										<!--  compare start_date and end_date with today date -->
+								
+										{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+											{% if p.is_status == True %}
+												<p style="color:#ec008c;"> Price: ${{ p.discount_as_price |floatformat:2 }}</p>
+					        				{% else %}
+					        					{% if product.special_price %}
+					        						<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+													
+												{% else %}
+													<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+					        				{% endif %}
+										
+										{% else %}
+											{% if product.special_price %}
+												<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+											{% else %}
+												<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+											{% endif %}
+
+										{% endif %}
+										<!-- End compare start_date and end_date -->
+
+
+			        				{% endfor %}
+
+			        			{% else %}
+									
+									{% if product.special_price %}
+										<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+									{% else %}
+										<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+									{% endif %}
+								{% endif %}
+			        		</div>
+			        		<hr/>
+
+
+						      <form action="{% url 'product:save_order' %}" method="post">
+								{% csrf_token %}
+							    <div class="modal-body">
+							        <div class="row" style="padding-left:15px !important; padding-right: 15px !important;">
+							        	<div class="col-md-12 col-sm-6">
+
+								        		{% now "YmdHis" as mynow %}
+
+							        			{% if product.promotion_set.all.count > 0 %}
+													{% for p in product.promotion_set.all %}	
+														{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+															{% if p.is_status == True %}
+																<input type="hidden" value="{{ p.discount_as_price }}" id="price" name="price">
+
+									        				{% else %}
+									        					{% if product.special_price %}
+																	<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+																{% else %}
+																	<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																{% endif %}
+									        				{% endif %}
+														{% else %}
+
+															{% if product.special_price %}
+																<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+															{% else %}
+																<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																
+															{% endif %}
+														{% endif %}
+							        				{% endfor %}
+
+							        			{% else %}
+													
+													{% if product.special_price %}
+														<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+													{% else %}
+														<input type="hidden" value="{{ product.price }}" id="price" name="price">
+														
+													{% endif %}
+
+												{% endif %}
+
+												<input type="hidden" value="{{ product.id }}" id="id_product_id" name ="id_product_id">
+
+								        		<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ឈ្មោះ (Name)</label>
+													<input type="text" class="form-control" id="id_name" name="id_name" aria-describedby="helpBlock2" required>
+												</div>
+												
+												<div class="form-group has-warning" style="">
+												  <label class="control-label" for="inputSuccess1">លេខទូរស័ព្ទ (Phone number)</label>
+												  <input type="text" class="form-control" id="id_phone_number" name="id_phone_number" required placeholder="(012)010-203">
+												</div>
+
+												<div class="form-group has-success">
+												  <label class="control-label" for="inputSuccess1">អុីម៉ែល (Email)</label>
+												  <input type="email" class="form-control" id="id_email" name="id_email" placeholder="example@mail.com">
+												</div>
+
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ចំនួន (Unit)</label>
+													<input type="number" class="form-control" id="id_quantity" name="id_quantity" required>
+												</div>
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">អាស័យដ្ឋាន (Address)</label>
+													<textarea  class="form-control" id="id_address" name="id_address" required rows="10"></textarea>
+												</div>
+											
+
+										</div>
+							        </div>
+
+							      </div>
+
+							      <div class="modal-footer">
+							      	<div>
+
+							      		<div>
+								    		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								    		<input type="hidden" name="" id="sub_invoice_no" value="">
+					        				
+							        	<button type="submit" class="btn btn-primary" onclick=""><span class="glyphicon glyphicon-usd"></span> Order </button>
+							    		</div>
+
+
+
+							      	</div>
+							      </div>
+							</form>
+
+						    </div>
+						  </div>
+						</div>
+
+						
+
+
+					{% endfor %}
+				</div>
+
 			{% endif %}
 
 			<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+		<hr>
+		<div class="row">
+
 			
-		{% endfor %}
+			<div class="product_title_more_detail"> 
+				<p style="color:#ec008c;">Feedback</p>
+			</div>
+
+			{% block head %}
+				<meta property="og:url"  content="http://{{ request.META.HTTP_HOST }}{% url 'product:product_detail' ipk %}" />
+				<meta property="og:type" content="website" />
+				<meta property="og:title" content="Your Website Title" />
+				<meta property="og:description" content="Your description" />
+				<meta property="fb:app_id" content="584602485613828">
+				{% if product.default_image %}
+					<meta property="og:image" content="http://127.0.0.1:8000/{{ product.default_image.url }}" />
+				{% endif %}
+
+			{% endblock %}
+
+
+
+			<div class="col-md-12">
+				<!-- FACEBOOK COMMENTS -->
+
+				<div id="fb-root"></div>
+				<script>(function(d, s, id) {
+				    var js, fjs = d.getElementsByTagName(s)[0];
+				    if (d.getElementById(id)) return;
+				    js = d.createElement(s); js.id = id;
+				    js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
+				    fjs.parentNode.insertBefore(js, fjs);
+				  }(document, 'script', 'facebook-jssdk'));
+
+				</script>
+
+				<div class="fb-like" data-href="http://{{ request.META.HTTP_HOST }}{% url 'product:product_detail' ipk %}" data-width="" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+
+				<div class="fb-comments" data-href="http://{{ request.META.HTTP_HOST }}{% url 'product:product_detail' ipk %}" data-width="100%" data-numposts=""></div>
+			</div>
+		</div>
+
 
 	{% else %}
 		<h2>Form</h2>
 	{% endif %}
 
-
 	{% block javascript %}
+
 		<script type="text/javascript">
+
+
+			n_rate = document.getElementById('myrate').value;
+
+			for (var i = 1; i <= n_rate; i++) {
+				// document.getElementById('r'+i).style.color = '#ffc700';
+				document.getElementById('star'+i).setAttribute('input', 'checked');
+				document.getElementById('r'+i).style.color = '#ffc700';
+
+				// .rate > input:checked ~ label { color: #ffc700;}
+			}
+
+			function closeMessage()
+			{
+				document.getElementById("display_msg").style.display ='none';	
+			}
+
 			// When the user scrolls down 20px from the top of the document, show the button
 			window.onscroll = function() {scrollFunction()};
 
@@ -117,7 +700,6 @@
 			    document.getElementById("myBtn").style.display = "none";
 			  }
 			}
-
 			// When the user clicks on the button, scroll to the top of the document
 			function topFunction() {
 			  document.body.scrollTop = 0;

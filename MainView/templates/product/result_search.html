@@ -9,37 +9,269 @@
 
 			{% if all_product.count > 1 %}
 				<div style="padding-top: 20px;">
-					<p class="search_title">Results search of "<span style="font-style: italic;">{{ title }}" </span>:</p>
-					<hr style="border-bottom: 1px solid gray;" />
+					<p class="search_title"><span class="glyphicon glyphicon-filter"></span> Results: "{{ title }}" </p>
+					<!-- <hr style="border-bottom: 1px solid #ec008c;" /> -->
 				</div>
 			{% else %}
 				<div style="padding-top: 20px;">
-					<p class="search_title">Result search of "<span style="font-style: italic;">{{ title }}" </span>:</p>
-					<hr style="border-bottom: 1px solid gray;" />
+					<p class="search_title"><span class="glyphicon glyphicon-filter"></span> Result: "{{ title }}" </p>
+					<!-- <hr style="border-bottom: 1px solid #ec008c;" /> -->
 				</div>
 			{% endif %}
 
+
 			<div class="row row-no-gutters">
 					{% for product in all_product %}
-						<a href="{% url 'product:product_detail' product.id %}">
-						  	<div class="col-xs-12 col-sm-6 col-md-4 product_box">
-								<div class="product_list">
-									{% if product.default_image %}
-											<div style="margin-bottom: 20px;" class="image_wrapper">
-												<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
-											</div>	
+					  	<div class="col-xs-12 col-sm-6 col-md-3 product_box">
+					  	
+							<div class="product_list">
+								<div style="color: #fff; background: #ed008c; height: 55px; text-align: center;padding-top: 10px;">
+									<p class="product_title">{{ product.name }}</p>
+								</div>
+								
+
+								<a href="{% url 'product:product_detail' product.id %}" style="text-decoration: none;">
+									<div style="border:1px solid #ed008c; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; background-color: white;">
+										{% if product.default_image %}
+												<div style="margin-bottom: 20px;" class="image_wrapper">
+													<img src = "../../../{{ product.default_image.url }}" class="default_image img-responsive">
+												</div>	
+										{% endif %}
+										<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
+
+										<div>
+											
+											{% now "YmdHis" as mynow %}
+											
+								        	{% if product.promotion_set.all.count > 0 %}
+												{% for p in product.promotion_set.all %}	
+													
+													<!--  compare start_date and end_date with today date -->
+													{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+														
+														{% if p.is_status == True %}
+															
+								        					<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ p.discount_as_price |floatformat:2 }} </span>
+											        		</p>
+
+
+								        				{% else %}
+								        					{% if product.special_price %}
+																<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+
+															{% else %}
+																<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															{% endif %}
+								        				{% endif %}
+
+								        			{% else %}
+														{% if product.special_price > 0 %}
+															<p class="product_price">
+											        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+											        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+											        		</p>
+														{% else %}
+															<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+															
+														{% endif %}
+
+													{% endif %}
+						        				{% endfor %}
+
+						        			{% else %}
+												
+												{% if product.special_price > 0 %}
+													<p class="product_price">
+									        			Price: <span style="text-decoration: line-through"> ${{ product.price |floatformat:2 }}</span>
+									        			<span style="color:red;">${{ product.special_price |floatformat:2 }} </span>
+									        		</p>
+												{% else %}
+													<p class="product_price">Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+											{% endif %}
+
+
+
+										</div>
+									</div>
+								</a>
+
+						
+								<a type="submit" href="#"  data-toggle="modal" data-target="#exampleModal{{ product.id }}" style="text-decoration: none !important;">
+									<div style="color: #fff; background: #ed008c; height: 40px; text-align: center;padding-top: 0px; border-radius: 3px 3px;">
+										<p class="product_title"><span class="glyphicon glyphicon-shopping-cart"></span> Order</p>
+									</div>
+								</a>
+
+						  	</div>
+						</div>
+
+						<!-- Popup model form for order product -->
+						<div class="modal fade" id="exampleModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding: 20px !important;">
+						  <div class="modal-dialog" role="document" style="width: 50% !important; border: none !important; border-radius: 0px !important; margin-left: auto; margin-right: auto;">
+						    <div class="modal-content" style="border: none !important; border-radius: 0px !important;">
+						      <div class="modal-header">
+						        <h4 class="modal-title" id="exampleModalLabel"> ORDER FORM </h4>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+
+					      	<div style="padding-left:15px;">
+			        			<p style="color:#ec008c; font-family: 'Futura', Arial, Helvetica, sans-serif; font-size: 16px;">{{ product.name }}</p>
+			        			<p style="color:#ec008c;">{{ product.product_number }}</p>
+
+								{% now "YmdHis" as mynow %}
+			        			{% if product.promotion_set.all.count > 0 %}
+									
+									{% for p in product.promotion_set.all %}
+
+										<!--  compare start_date and end_date with today date -->
+								
+										{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+											{% if p.is_status == True %}
+												<p style="color:#ec008c;"> Price: ${{ p.discount_as_price |floatformat:2 }}</p>
+					        				{% else %}
+					        					{% if product.special_price %}
+					        						<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+													
+												{% else %}
+													<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+													
+												{% endif %}
+					        				{% endif %}
+										
+										{% else %}
+											{% if product.special_price %}
+												<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+											{% else %}
+												<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
+											{% endif %}
+
+										{% endif %}
+										<!-- End compare start_date and end_date -->
+
+
+			        				{% endfor %}
+
+			        			{% else %}
+									
+									{% if product.special_price %}
+										<p style="color:#ec008c;"> Price: ${{ product.special_price |floatformat:2 }}</p>
+									{% else %}
+										<p style="color:#ec008c;"> Price: ${{ product.price |floatformat:2 }}</p>
 									{% endif %}
-									<div><p class="product_name">{{ product.name }}</p></div>
-									<div><p class="product_code"> Code: {{ product.product_number }}</p></div>
-									<div><p class="product_price">Price: $ {{ product.price }}</p></div>
-							  	</div>
-							</div>
-						</a>
+								{% endif %}
+
+
+			        		</div>
+			        		<hr/>
+
+						    <form action="{% url 'product:save_order_index' %}" method="post">
+								{% csrf_token %}
+							    <div class="modal-body">
+							        <div class="row" style="padding-left:15px !important; padding-right: 15px !important;">
+							        	<div class="col-md-12">
+							        			{% now "YmdHis" as mynow %}
+
+							        			{% if product.promotion_set.all.count > 0 %}
+													{% for p in product.promotion_set.all %}	
+														{% if p.start_date|date:"YmdHis" < mynow and p.end_date|date:"YmdHis" > mynow %}
+
+															{% if p.is_status == True %}
+																<input type="hidden" value="{{ p.discount_as_price }}" id="price" name="price">
+
+									        				{% else %}
+									        					{% if product.special_price %}
+																	<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+																{% else %}
+																	<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																{% endif %}
+									        				{% endif %}
+														{% else %}
+
+															{% if product.special_price %}
+																<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+															{% else %}
+																<input type="hidden" value="{{ product.price }}" id="price" name="price">
+																
+															{% endif %}
+														{% endif %}
+							        				{% endfor %}
+
+							        			{% else %}
+													
+													{% if product.special_price %}
+														<input type="hidden" value="{{ product.special_price }}" id="price" name="price">
+													{% else %}
+														<input type="hidden" value="{{ product.price }}" id="price" name="price">
+														
+													{% endif %}
+
+												{% endif %}
+
+												<input type="hidden" value="{{ product.id }}" id="id_product_id" name ="id_product_id">
+
+								        		<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ឈ្មោះ (Name)</label>
+													<input type="text" class="form-control" id="id_name" name="id_name" aria-describedby="helpBlock2" required>
+												</div>
+												
+												<div class="form-group has-warning" style="">
+												  <label class="control-label" for="inputSuccess1">លេខទូរស័ព្ទ (Phone number)</label>
+												  <input type="text" class="form-control" id="id_phone_number" name="id_phone_number" required placeholder="(012)010-203">
+												</div>
+
+												<div class="form-group has-success">
+												  <label class="control-label" for="inputSuccess1">អុីម៉ែល (Email)</label>
+												  <input type="email" class="form-control" id="id_email" name="id_email" placeholder="example@mail.com">
+												</div>
+
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">ចំនួន (Unit)</label>
+													<input type="number" class="form-control" id="id_quantity" name="id_quantity" required>
+												</div>
+												<div class="form-group has-warning">
+													<label class="control-label" for="inputSuccess1">អាស័យដ្ឋាន (Address)</label>
+													<textarea  class="form-control" id="id_address" name="id_address" required rows="10"></textarea>
+												</div>
+											
+
+										</div>
+							        </div>
+
+							      </div>
+
+							      <div class="modal-footer">
+							      	<div>
+
+							      		<div>
+								    		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								    		<input type="hidden" name="" id="sub_invoice_no" value="">
+					        				
+							        	<button type="submit" class="btn btn-primary" onclick=""><span class="glyphicon glyphicon-usd"></span> Order </button>
+							    		</div>
+
+
+
+							      	</div>
+							      </div>
+							</form>
+
+						    </div>
+						  </div>
+						</div>
+						
 					{% endfor %}
 				</div>
 
 		{% else %}
-				<div style=" text-align: center; margin-top: 10px;"><h3> Search not found. </h3></div>
+				<div style=" text-align: center; margin-top: 10px;"><h3 style="color: red;">Search not found.</h3></div>
 			{% endif %}
 	</div>
 

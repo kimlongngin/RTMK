@@ -65,13 +65,13 @@
     margin-bottom: 8px;
     background-color: transparent;
     background-image: none;
-    border: 1px solid black !important;
+    border: 1px solid #ffffff !important;
     border-radius: 4px;
 }
 .my_header
 {
-	background-color: rgb(40, 38, 41);
-	/*background-color: rgb(21, 78, 68);*/
+	background: #ed008c;
+    border-bottom: 1px solid #d60080;
 	background-image: none;
 	background-repeat: repeat;
 	background-attachment: scroll;
@@ -80,9 +80,18 @@
 	background-position-x: 0%;
 	background-position-y: 0%;
 	background-size: auto auto;
+	height: 90px;
+	padding-top: 20px;
+
 }
 .my_header a 
  {
+	color: #ffffff !important;
+	opacity: 1;
+    font-family: SourceSansPro-Black,"Microsoft YaHei","Noto Sans Khmer",sans-serif!important;
+    font-size: 16px !important;
+}
+
 
 	
  }

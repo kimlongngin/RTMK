@@ -15,6 +15,7 @@ urlpatterns = [
 	url(r'^register/$', views.UserFormView.as_view(), name='register'),
 	url(r'^usercontrol/', views.IndexView.as_view(), name='index'),
 	url(r'^userlist/', views.ListUserView.as_view(), name='listuser'),
+	url(r'^list_user_invoice/(?P<pk>[0-9, a-z, A-Z]+)/$', views.ListUserInvoice.as_view(), name='list_user_invoice'),
 
 
 	# url(r'^login/$', auth_views.login, name='login'),	

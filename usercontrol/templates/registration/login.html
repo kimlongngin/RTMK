@@ -37,6 +37,7 @@
 				{% endif %}
 
               
+              
 				<!-- <form  id="loginform" class="form-signin form-horizontal" role="form" method="POST" action="{% url 'usercontrol:login' %}?next={{request.path}}"> -->
                 <form  id="loginform" class="form-signin form-horizontal" role="form" method="POST" action="{% url 'usercontrol:login' %}">
 
@@ -60,6 +61,7 @@
                             </div>
                     </div>
 
+
                     <div style="margin-top:10px" class="form-group">
                         <!-- Button -->
                         <input type="hidden" name="next" value="{{next}}" />
@@ -69,18 +71,6 @@
                         </div> 
                     </div>
 
-
-
-                    <div class="form-group">
-                        <div class="col-md-12 control">
-                            <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
-                                Don't have an account! 
-                            <a href="{% url 'usercontrol:register' %}" >
-                                Sign Up Here
-                            </a>
-                            </div>
-                        </div>
-                    </div> 
                 </form>
 		 	</div>
 		</div>

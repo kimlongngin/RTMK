@@ -1,0 +1,267 @@
+{% extends 'product/base.html' %}
+
+{% block title %} Cart {% endblock %}
+
+{% block body %}
+
+
+	<div class="index_background">
+		<div class="head_index" style="border-bottom: 1px solid #ec008c;">
+			<div class="product_title_home"> 
+				<p style="color:#ec008c;"> Shopping Cart</p>
+			</div>
+
+			
+			<form class="form-inline" action="{% url 'product:search_list_cart' %}" method="get" style="margin-top: 2px; ">
+				{% csrf_token %}
+				<div class="form-group">
+
+			      <input style="margin-left: 0px; padding-left: 10px; min-width: 250px;" type="text" class="form-control" name= "q" value="" placeholder="Enter name, phone number, email" >		
+			  	</div>
+
+	    		<div class="form-group">
+	                <div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+	                    <input class="form-control" size="16" type="text" value="" readonly style="min-width: 250px;" id="start_date" name = "start_date">
+	                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+	                </div>
+					<input type="hidden" id="dtp_input2" value="" /><br/>
+	            </div>
+
+	            <div class="form-group">
+	                <div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+	                    <input class="form-control" size="16" type="text" value="" readonly style="min-width: 250px;" id="end_date" name = "end_date">
+	                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+	                </div>
+					<input type="hidden" id="dtp_input2" value="" /><br/>
+	            </div>
+			  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Seach</button>
+			</form>
+
+		</div>
+
+
+
+		<input type="hidden" value="{% url 'product:avtivation_cart' %}" id = 'geturl' name='geturl'>
+
+		{% if all_cart %}
+			
+				{% for i in all_cart %}
+					
+					<div class="row row-no-gutters" style="padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #ec008c;">
+						<div class="col-md-4">
+					  		{% if i.product.default_image %}
+								<img src = "../../../{{ i.product.default_image.url }}" class="img-thumbnail img-responsive cart_image">
+							{% endif %}</div>
+						<div class="col-md-7" style="text-align: left !important;">
+							<p class="product_title_cart">{{ i.product }}</p>
+							<p style="font-family: 'Futura', Arial, Helvetica, sans-serif !important; font-weight: 300; font-size: 15px;"><span class="glyphicon glyphicon-file"></span> {{ i.invoice_number }}</p>
+							<p style="font-style: italic;"> <span class="glyphicon glyphicon-calendar"></span> {{ i.created_at }} </p>
+							{% if i.email %}
+								<p><span class="glyphicon glyphicon-user"></span> <span style="font-weight: bold;"> Customer: </span> {{ i.customer_name }}<span style="font-weight: bold;"> <span class="glyphicon glyphicon-earphone"></span> Tel:</span> {{ i.phone_number }}, <span style="font-weight: bold;"><span class="glyphicon glyphicon-envelope"></span> Email:</span> {{ i.email }}</p>
+							{% else %}
+								<p>Tel: {{ i.phone_number }}</p>
+							{% endif %}
+
+							<p>
+								<span style="font-weight: bold;"> <span class="glyphicon glyphicon-shopping-cart"></span> Qty:</span> {{ i.quantity }}, <span style="font-weight: bold;">Price:</span> ${{ i.price }}			
+							</p>
+							<p><span class="glyphicon glyphicon-home"></span> <span style="font-weight: bold;">Address:</span> {{ i.address }}</p>
+
+					  	</div>
+					  	<div class="col-md-1" style="text-align: left;">
+
+					  		<p style="color: #B12704!important; font-weight: bold; font-size: 16px;">
+				  				{% widthratio i.price 1 i.quantity  as total %}
+				  				Total: ${{ total |floatformat:2 }}
+				  			</p>
+							
+							<div class="checkbox">
+							    <label>
+							    	{% if i.activation == True %}
+							    		<input type="checkbox" id='chk_ach_{{i.id}}' onchange='handleChange(this);' value='{{ i.id }}' checked="true"> Acheive
+							    	{% else %}
+							    		<input type="checkbox" id='chk_ach_{{i.id}}' onchange='handleChange(this);' value='{{ i.id }}'> Acheive
+
+							    	{% endif %}
+							    </label>
+						    </div>
+						    <div>
+						    	<a type="button" class="btn btn-danger" href="{% url 'product:delete_cart' i.id %}"> <span class="glyphicon glyphicon-trash"></span> Delete </a>
+
+						    </div>
+
+					  	</div>
+					</div>
+
+				{% endfor %}
+
+				<div style="margin-bottom: 20px; margin-top: 20px;">
+					<a href = "#" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-print"></span> Export</a>
+				</div>
+
+
+			<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+		{% else %}
+			<h4>Your Cart is empty.</h4>
+		{% endif %}
+
+		
+	</div>
+
+
+
+	<div class="pagination_index">
+				
+		{% if is_paginated %}
+		<hr>
+			<ul class="pagination" style="margin:0px 0px !important">
+			{% if page_obj.has_previous %}
+			    <li>
+			        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+			    </li>
+			{% endif %}
+			    <li class="">
+			        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+			    </li>
+			{% if page_obj.has_next %}
+			    <li>
+			        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+			    </li>
+			{% endif %}
+			</ul>
+		
+		{% endif %}
+	</div>
+	
+	{% block javascript %}
+
+		<script type="text/javascript">
+			
+			function handleChange(checkbox) {
+
+				var iurl = document.getElementById('geturl').value;
+
+			    if(checkbox.checked == true){
+			        id = checkbox.value;
+			        activation = 1
+			        $.ajax({
+						headers: { "X-CSRFToken": getCookie("csrftoken") },
+				    	url: String(iurl),
+				    	type: "GET",
+				    	contentType: "application/json; charset=utf-8",
+		                dataType: "json",
+		                async: true,
+		                cache: false,
+				    	data: {
+				    		"id": id,
+				    		"activation": activation,
+				    		csrfmiddlewaretoken: '{{ csrf_token }}',
+				    	},
+				    	success: function (data) {
+				    		console.log(data);
+				    		console.log('Success updated.');
+
+						},
+						error: function(error)
+						{
+							console.log(error);
+						}
+					});
+
+			    }else{
+			        id = checkbox.value;
+			        activation = 0
+			        $.ajax({
+						headers: { "X-CSRFToken": getCookie("csrftoken") },
+				    	url: String(iurl),
+				    	type: "GET",
+				    	contentType: "application/json; charset=utf-8",
+		                dataType: "json",
+		                async: true,
+		                cache: false,
+				    	data: {
+				    		"id": id,
+				    		"activation": activation,
+				    		csrfmiddlewaretoken: '{{ csrf_token }}',
+				    	},
+				    	success: function (data) {
+				    		console.log(data);
+				    		console.log('Success updated.');
+
+						},
+						error: function(error)
+						{
+							console.log(error);
+						}
+					});
+			   }
+
+			}
+
+
+		    $('.form_datetime').datetimepicker({
+		        //language:  'fr',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 2,
+				forceParse: 0,
+		        showMeridian: 1
+		    });
+			$('.form_date').datetimepicker({
+		        language:  'fr',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 2,
+				minView: 2,
+				forceParse: 0
+		    });
+			$('.form_time').datetimepicker({
+		        language:  'fr',
+		        weekStart: 1,
+		        todayBtn:  1,
+				autoclose: 1,
+				todayHighlight: 1,
+				startView: 1,
+				minView: 0,
+				maxView: 1,
+				forceParse: 0
+		    });
+			
+
+
+			function closeMessage()
+			{
+				document.getElementById("display_msg").style.display ='none';	
+			}
+
+
+			// When the user scrolls down 20px from the top of the document, show the button
+			window.onscroll = function() {scrollFunction()};
+
+			function scrollFunction() {
+			  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+			    document.getElementById("myBtn").style.display = "block";
+			  } else {
+			    document.getElementById("myBtn").style.display = "none";
+			  }
+			}
+
+			// When the user clicks on the button, scroll to the top of the document
+			function topFunction() {
+			  document.body.scrollTop = 0;
+			  document.documentElement.scrollTop = 0;
+			}
+
+			$('#myCollapsible').collapse({
+			  toggle: false
+			})
+			</script>
+	{% endblock %}
+{% endblock %}
